@@ -34,9 +34,9 @@ class SbisAPI
                 ->setFormat(Client::FORMAT_JSON)
                 ->setUrl('https://api.sbis.ru/oauth/service/')
                 ->setData([
-                    "app_client_id" => "***",
-                    "login" => "***",
-                    "password" => "***"
+                    "app_client_id" => "****",
+                    "login" => "****",
+                    "password" => "****"
                 ])
                 ->send();
 
