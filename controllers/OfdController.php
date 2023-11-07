@@ -61,7 +61,8 @@ class OfdController extends AppController
 //            echo 'Sum:';
 //            $this->dump($test);
 //        }
-
+        $mercuryApi->OpenSession();
+        $this->dump($mercuryApi->sessionKey);
         if ($_GET['mode'] == '050771') {
 
             return $this->render('debug', compact('goods'));
@@ -80,8 +81,8 @@ class OfdController extends AppController
         if (method_exists($mercuryApi, $_GET['request'])) {
             $temp = $_GET['request'];
             $result = $mercuryApi->$temp();
-            return json_encode($result);
+            return json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         }
-        return json_encode($result);
+        return json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
     }
 }
