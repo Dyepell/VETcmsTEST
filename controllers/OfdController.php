@@ -41,10 +41,12 @@ class OfdController extends AppController
         $this->dump($kktList);
         return true;
     }
-
+    public function actionPrintCheck(){
+        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
+    }
     public function actionMercurytest()
     {
-        $mercuryApi = new MercuryAPI();
+        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
 
         $goods = [
             'productName' => 'Ветеринарные услуги',
@@ -76,7 +78,7 @@ class OfdController extends AppController
         $result['code'] = '228';
         $result['data'] = $_GET['request'];
 
-        $mercuryApi = new MercuryAPI();
+        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
 
         if (method_exists($mercuryApi, $_GET['request'])) {
             $temp = $_GET['request'];

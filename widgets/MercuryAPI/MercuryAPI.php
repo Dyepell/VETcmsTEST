@@ -46,9 +46,9 @@ class MercuryAPI
         ]
     ];
 
-
-    public function __construct(){
-        $this->client = new Client(['baseUrl' => 'http://localhost:50010/api.json']);
+    //http://localhost:50010/api.json
+    public function __construct(string $baseUrl){
+        $this->client = new Client(['baseUrl' => $baseUrl]);
         $this->OpenSession();
     }
 
@@ -116,6 +116,7 @@ class MercuryAPI
             $result = $this->CreateRequest('POST', ["command" => "OpenSession"]);
             $this->sessionKey = $result['data']['sessionKey'];
             $temp['sessionKey'] = $this->sessionKey;
+            //пихнуть SessionKey в куки
             file_put_contents(__DIR__ . '/../../widgets/MercuryAPI/SessionKey.json', json_encode($temp));
         } else
             $this->sessionKey = $temp['sessionKey'];

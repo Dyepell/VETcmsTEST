@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9474362ff6f344fdab6aafe2dcb4034",
+    "content-hash": "56e87e5b8b857c4a3328793a7dae507d",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -703,6 +703,52 @@
                 "source": "https://github.com/Konstantin-Vl/yii2-jquery-fix-clone/tree/master"
             },
             "time": "2019-02-08T09:57:24+00:00"
+        },
+        {
+            "name": "lepiaf/serialport",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lepiaf/serialport.git",
+                "reference": "17e9ff0fb2f373986a22918a995699b9fe688ba7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lepiaf/serialport/zipball/17e9ff0fb2f373986a22918a995699b9fe688ba7",
+                "reference": "17e9ff0fb2f373986a22918a995699b9fe688ba7",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php-mock/php-mock-phpunit": "^2.6",
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "lepiaf\\SerialPort\\": "src/lepiaf/SerialPort"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thierry Thuon",
+                    "email": "lepiaf@users.noreply.github.com"
+                }
+            ],
+            "description": "Serial port access convenience class",
+            "support": {
+                "issues": "https://github.com/lepiaf/serialport/issues",
+                "source": "https://github.com/lepiaf/serialport/tree/v1.1.0"
+            },
+            "time": "2020-10-31T02:46:36+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -6060,7 +6106,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0"
+        "php": ">=7.2"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

@@ -113,3 +113,11 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.clinic-col {
+    background-color: rgb(235, 235, 235);
+    padding-bottom: 15px;
+    border-radius: 15px;
+    margin-left: 10px;
+    min-height: 500px;
+}
