@@ -6,8 +6,9 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
-require __DIR__ . '/../widgets/MercuryAPI/MercuryAPI.php';
+require __DIR__ . '/../widgets/MercuryWrapper/MercuryWrapper.php';
 require __DIR__ . '/../widgets/SbisAPI/SbisAPI.php';
+require __DIR__ . '/../widgets/MyUtility/MyUtility.php';
 
 $config = require __DIR__ . '/../config/web.php';
 

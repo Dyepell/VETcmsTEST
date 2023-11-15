@@ -1,5 +1,5 @@
 <?php
-    use MercuryAPI\MercuryAPI;
+    use MercuryAPI\MercuryWrapper;
 
 
     function dump($arr){

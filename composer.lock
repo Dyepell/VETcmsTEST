@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56e87e5b8b857c4a3328793a7dae507d",
+    "content-hash": "125739b917d50972e390bb02b4769604",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -201,6 +201,58 @@
                 "source": "https://github.com/cebe/markdown"
             },
             "time": "2018-03-26T11:24:36+00:00"
+        },
+        {
+            "name": "degordian/yii2-webhooks",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bornfight/yii2-webhooks.git",
+                "reference": "c6ac105219d7866a3476e11dd49e5967dd7225c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bornfight/yii2-webhooks/zipball/c6ac105219d7866a3476e11dd49e5967dd7225c0",
+                "reference": "c6ac105219d7866a3476e11dd49e5967dd7225c0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "yiisoft/yii2": "^2.0@dev",
+                "yiisoft/yii2-httpclient": "~2.0.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "2.5.x-dev"
+            },
+            "default-branch": true,
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "tests\\unit\\models\\": "tests/unit/models",
+                    "degordian\\webhooks\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rudolf Jurišić",
+                    "email": "rudolf.jurisic@degordian.com"
+                }
+            ],
+            "description": "Yii2 extension for webhooks",
+            "keywords": [
+                "extension",
+                "webhook",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/degordian/yii2-webhooks/issues",
+                "source": "https://github.com/degordian/yii2-webhooks"
+            },
+            "time": "2021-01-29T08:48:36+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -6101,7 +6153,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "execut/yii2-autosize-textarea": 20
+        "execut/yii2-autosize-textarea": 20,
+        "degordian/yii2-webhooks": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

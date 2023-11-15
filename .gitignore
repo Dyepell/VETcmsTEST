@@ -19,7 +19,7 @@ Thumbs.db
 /reports
 /logs
 /uploads
-/widgets/MercuryAPI/SessionKey.json
+/widgets/MercuryWrapper/SessionKey.json
 
 
 # composer itself is not needed

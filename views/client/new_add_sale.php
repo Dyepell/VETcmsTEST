@@ -40,6 +40,8 @@ function dump($arr){
         var DISCOUNT_PROCENT;
         var VID_OPL;
         var DATE;
+        var goodId;
+
         ID_DOC=$("#doctors").val();
         $('input:checkbox:checked').each(function(){
             str=($(this).val());
@@ -68,22 +70,25 @@ function dump($arr){
             DATE=$("#inputDate").val()
         );
         VID_OPL=$("#vidOpl").val();
+        goodId = $("#products").val();
 
         console.log(PRIHOD_ID);
         console.log(KOL);
         console.log(DISCOUNT_PROCENT);
         console.log(VID_OPL);
         console.log(DATE);
+        console.log(goodId);
+
         document.location.href="index.php?r=client/new_sale_form&ID_PRIHOD="+PRIHOD_ID
             +"&ID_DOC="+ID_DOC
             +"&KOL="+KOL
             +"&DISCOUNT_PROCENT="+DISCOUNT_PROCENT
             +"&VID_OPL="+VID_OPL
-            +"&DATE="+DATE;
+            +"&DATE="+DATE
+            + "&goodId=" + goodId;
     }
 </script>
 <div class="container-fluid row" style="margin-top: 70px;margin-bottom: 50px;">
-
     <div class="form-group">
         <label for="exampleFormControlSelect1">Сотрудник</label>
         <select class="form-control" id="doctors" >
@@ -193,8 +198,30 @@ function dump($arr){
 
 
 <?php
+$js = <<<JS
 
-?>
+function getScannedGood() {
+        $.ajax({
+            url:  'index.php?r=shop/getscannedgood',
+            type: 'POST',
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById('products').value= response;
+                    select_products();
+                }
+            });
+        return false;
+}
+
+let barcodeInterval = setInterval(getScannedGood, 500);
+
+$("#products" ).on( "focus", function() {
+    clearInterval(barcodeInterval);
+});
+
+JS;
+
+$this->registerJs($js);?>
 
 
 

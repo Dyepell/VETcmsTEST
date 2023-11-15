@@ -3,12 +3,10 @@ namespace app\controllers;
 
 use app\models\BrandImagesForm;
 use Yii;
-use yii\base\BaseObject;
 use app\models\Clinic;
 use app\models\ClinicForm;
 use app\models\BrandImagesTypesForm;
 use yii\data\ActiveDataProvider;
-use yii\web\UploadedFile;
 
 
 class ClinicController extends AppController

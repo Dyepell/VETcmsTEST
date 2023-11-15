@@ -16,6 +16,7 @@ use yii\widgets\ActiveForm;
         <h1>Поступление товара</h1>
         <div class="col">
             <div class="col"><a href="index.php?r=client/prihod" class="btn btn-success" style="width: 100%; margin-bottom: 10px;">Добавить товар</a></div>
+            <div class="col"><a href="index.php?r=shop%2Fgoodsimport" class="btn btn-success" style="width: 100%; margin-bottom: 10px;">Импорт товаров</a></div>
             <?= Html::beginForm(['client/report_prihod', 'id' => 'otchet', 'name'=>'form1'], 'GET'); ?>
 
             <div class="form-group">

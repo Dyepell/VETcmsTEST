@@ -12,6 +12,7 @@ use app\assets\AppAsset;
 use app\models\BrandImagesForm;
 use app\models\ClinicForm;
 
+
 AppAsset::register($this);
 
 $logo = BrandImagesForm::findOne(['imageType' => 1]);
@@ -97,7 +98,7 @@ $clinic = ClinicForm::findOne(['id' => 1]);
                     ['label' => 'Списание товара', 'url' => ['/client/writeoff_pas']],
                     ['label' => 'Продажа товара', 'url' => ['/client/sale']],
                     ['label' => 'Отчет по продажам', 'url' => ['/reports/report_sale']],
-
+                    ['label' => 'Касса', 'url' => ['/cashbox/cashboxpage']],
                 ],
             ],
             ['label' => 'Клиника', 'url' => ['/clinic/clinicpage']]

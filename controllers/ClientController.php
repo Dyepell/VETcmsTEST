@@ -8,6 +8,7 @@ use app\models\AnalysbloodForm;
 use app\models\Anamnez_lifeForm;
 use app\models\Client;
 use app\models\ClientForm;
+use app\models\ClinicForm;
 use app\models\Doctor;
 use app\models\DoctorForm;
 use app\models\Expense_catalog;
@@ -25,6 +26,7 @@ use app\models\PacientForm;
 use app\models\Poroda;
 use app\models\PriceForm;
 use app\models\Sale;
+use app\models\SaleChecksForm;
 use app\models\SaleForm;
 use app\models\SearchForm;
 use app\models\SearchModel;
@@ -43,6 +45,7 @@ use app\models\Prihod_tovaraForm;
 use app\models\Prihod_tovara;
 use app\models\Write_off;
 use app\models\WriteOffForm;
+use MyUtility\MyUtility;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -51,11 +54,13 @@ use app\models\Vid;
 use app\models\Vizit;
 use app\models\sl_vakc;
 use app\models\VizitForm;
+use yii\base\BaseObject;
 use yii\data\ActiveDataProvider;
 use app\models\BiohimForm;
 use app\models\Pacient;
 use Yii;
 use app\models\BrandImagesForm;
+use MercuryAPI\MercuryWrapper;
 
 
 class ClientController extends AppController
@@ -907,7 +912,7 @@ class ClientController extends AppController
         $model->VID_OPL=$VID_OPL;
         $model->KOL=$KOL;
         $model->DATE=date('Y-m-d', strtotime($DATE));
-        $tovar=Prihod_tovara::findOne(['ID_PRIHOD'=>$ID_PRIHOD]);
+        $tovar = Prihod_tovara::findOne(['ID_PRIHOD'=>$ID_PRIHOD]);
         $tovar->KOL=$tovar->KOL-$KOL;
         $model->SUMM=($model->KOL*$tovar->SELL_PRICE)*((100-$model->SKIDKA)/100);
         $fraction=($model->SUMM)-floor($model->SUMM);
@@ -918,6 +923,40 @@ class ClientController extends AppController
 
         $tovar->save();
         $model->save();
+
+        $saleId = Yii::$app->db->lastInsertID;
+
+        if ($model->VID_OPL == 0){
+            $clinic = ClinicForm::findOne(['id'=>1]);
+            $cashboxResponse['code'] = 'none';
+            $goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
+            $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+                $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
+            $qty = $model->KOL * 10000;
+            $price = $model->SUMM * 100;
+            $goods = [
+                0 => [
+                    'productName' => "$goodModel->NAME",
+                    'qty' => "$qty",
+                    'price' => "$price",
+                    'type' => 4
+                ]];
+            $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
+
+            if ($cashboxResponse['code'] == 200) {
+                $checkModel = new SaleChecksForm();
+                $checkModel->saleId = $saleId;
+                $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
+                $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
+                $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
+                $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
+                $checkModel->date = date("Y-m-d H:i:s");
+                $checkModel->save();
+            } else {
+                $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
+                file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
+            }
+        }
 
         return $this->redirect("index.php?r=client/sale");
     }
@@ -2125,7 +2164,7 @@ class ClientController extends AppController
 
         $document=new PhpWord();
         $document->setDefaultFontName('Calibri');
-        $document->setDefaultFontSize(8);
+        $document->setDefaultFontSize(6);
         $titleSection=$document->addSection(['marginTop' => '400', 'marginLeft'=>'600', 'marginRight'=>'600', 'marginBottom'=>'400', 'breakType'=>'continuous']);
         $titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
         $footer = $titleSection->addFooter();

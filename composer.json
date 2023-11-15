@@ -24,7 +24,8 @@
         "execut/yii2-autosize-textarea": "dev-master",
         "immusen/yii2-swoole-websocket": "^1.11",
         "yiisoft/yii2-httpclient": "*",
-        "lepiaf/serialport": "^1.1"
+        "lepiaf/serialport": "^1.1",
+        "degordian/yii2-webhooks": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
