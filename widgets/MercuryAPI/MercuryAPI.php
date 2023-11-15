@@ -38,10 +38,18 @@ class MercuryAPI
     private $address = "617760, Пермский край, г. Чайковский, ул. Кабалевского, 24а";
     private $location = "\"Зоодоктор\"";
     private $email = "zoodoktor88@mail.ru";
+    private $debugGoods = [
+        0 => [
+            'productName' => 'Ветеринарные услуги',
+            'qty' => '1000',
+            'price' => '10'
+        ]
+    ];
 
-
-    public function __construct(){
-        $this->client = new Client(['baseUrl' => 'http://localhost:50010/api.json']);
+    //http://localhost:50010/api.json
+    public function __construct(string $baseUrl){
+        $this->client = new Client(['baseUrl' => $baseUrl]);
+        $this->OpenSession();
     }
 
 
@@ -59,7 +67,8 @@ class MercuryAPI
 
 
     private function CreateRequest(string $method, array $data): array {
-        $result = [];
+        $result['code'] = 228;
+        $result['data'] = null;
 
         $response = $this->client->createRequest()->setMethod($method)
             ->setHeaders($this->defaultHeaders)
@@ -67,6 +76,7 @@ class MercuryAPI
             ->setUrl($this->url)
             ->setData(array_merge($this->defaultRequestData, $data))
             ->send();
+
 
         if ($response->getData() == NULL)
         {
@@ -80,7 +90,7 @@ class MercuryAPI
 
         //сделать иключения
         if ($response->isOk) {
-            $result['data'] = $response->getData()[0];
+            $result['data'] = $response->getData();
         }
 
         return $result;
@@ -94,76 +104,36 @@ class MercuryAPI
     }
 
 
-    public function OpenSession(): string {
-//        $response = $this->client->createRequest()
-//            ->setMethod('POST')
-//            ->addHeaders([
-//                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-//                'ContentType' => 'application/json; charset=utf-8'
-//            ])
-//            ->setFormat(Client::FORMAT_JSON)
-//            ->setUrl('http://localhost:50010/api.json')
-//            ->setData([
-//                "sessionKey" => null,
-//                "command" => "OpenSession",
-//                "portName" => "COM5",
-//                "baudRate" => 115200,
-//                "model" => "185F",
-//                "debug" => true,
-//                "logPath"=>  "d:\\openserver\\openserver\\openserver\\MercuryLog"
-//            ])
-//            ->send();
-//
-//        if ($response->getData() == NULL)
-//        {
-//            echo 'OpenSession Request failed';
-//            return $result;
-//        }
+    public function OpenSession() {
         $this->lastRequest = __FUNCTION__;
-        $result = $this->CreateRequest('POST', ["command" => "OpenSession"]);
-        $this->dump($result);
-        $this->sessionKey = $result['data']['sessionKey'];
+        $result['code'] = 228;
+        $result['data'] = '';
 
-        return $this->sessionKey;
+        $temp = json_decode(file_get_contents(__DIR__ . '/../../widgets/MercuryAPI/SessionKey.json'), true);
+
+        if (is_null($temp['startSessionTime']) OR ((time() - $temp['startSessionTime']) > 20)) {
+            $temp['startSessionTime'] = time();
+            $result = $this->CreateRequest('POST', ["command" => "OpenSession"]);
+            $this->sessionKey = $result['data']['sessionKey'];
+            $temp['sessionKey'] = $this->sessionKey;
+            //пихнуть SessionKey в куки
+            file_put_contents(__DIR__ . '/../../widgets/MercuryAPI/SessionKey.json', json_encode($temp));
+        } else
+            $this->sessionKey = $temp['sessionKey'];
+
+        return $result;
     }
 
 
-    public function CloseSession(): bool{
-//
-//        $response = $this->client->createRequest()
-//            ->setMethod('POST')
-//            ->addHeaders([
-//                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-//                'ContentType' => 'application/json; charset=utf-8'
-//            ])
-//            ->setFormat(Client::FORMAT_JSON)
-//            ->setUrl('http://localhost:50010/api.json')
-//            ->setData([
-//                "sessionKey" => $this->sessionKey,
-//                "command" => "CloseSession",
-//            ])
-//            ->send();
-//
-//        if ($response->getData() == NULL)
-//        {
-//            echo 'CloseSession Request failed';
-//            return $result;
-//        }
-//
-//        $result['code'] = $response->statusCode;
-//
-//        if ($response->isOk)
-//            $result['data'] = $response->getData()[0];
-//        else
-//            echo 'Bad request';
+    public function CloseSession(){
         $this->lastRequest = __FUNCTION__;
-        $result = $this->CreateRequest('POST', ["sessionKey" => $this->sessionKey, "command" => "CloseSession",]);
+        $result = $this->CreateRequest('POST', ["sessionKey" => "$this->sessionKey", "command" => "CloseSession",]);
 
-        return true;
+        return $result;
     }
 
 
-    public function OpenCheck(): bool {
+    public function OpenCheck() {
         $this->lastRequest = __FUNCTION__;
         $result = $this->CreateRequest(
             'POST',
@@ -180,15 +150,16 @@ class MercuryAPI
             ]
         );
 
-        return true;
+        return $result;
     }
 
 
-    public function AddGoods(string $productName, int $qty = 10000, float $price, string $extraGoodInfo = '', int $measureUnit = 0, int $taxCode = 5, int $paymentFormCode = 4, int $productTypeCode = 4): bool {
+    public function AddGoods(string $productName, int $qty = 10000, float $price, string $extraGoodInfo = '', int $measureUnit = 0, int $taxCode = 5, int $paymentFormCode = 4, int $productTypeCode = 4) {
         $this->lastRequest = __FUNCTION__;
         $result = $this->CreateRequest(
             'POST',
             [
+                "sessionKey" => $this->sessionKey,
                 "command" => "AddGoods",
                 "productName" => $productName,
                 "qty" => $qty,  // 1 шт = 10000
@@ -201,11 +172,11 @@ class MercuryAPI
             ]
         );
 
-        return true;
+        return $result;
     }
 
 
-    private function CloseCheck(string $buyerEmail, float $cash, float $ecash, float $prepayment = 0, float $credit = 0, string $extraCheckInfo = ''): bool {
+    public function CloseCheck(string $buyerEmail = '', float $cash = 0, float $ecash = 0, float $prepayment = 0, float $credit = 0, string $extraCheckInfo = '') {
         $this->lastRequest = __FUNCTION__;
         $result = $this->CreateRequest(
             'POST',
@@ -224,15 +195,22 @@ class MercuryAPI
             ]
         );
 
-        return true;
+        return $result;
     }
 
 
-    public function CreateCheck(array $goods, int $payType, string $buyerEmail):float {
+    public function CreateCheck(array $goods = [], int $payType = 1, string $buyerEmail = '') {
         $sum = 0;
         $cash = 0;
         $ecash = 0;
-        $this->OpenCheck();
+        $result['code'] = 228;
+        $result['data'] = [];
+        $goods = $this->debugGoods;
+
+        $openCheckResult = $this->OpenCheck();
+
+        if ($openCheckResult['code'] != 200)
+            return $openCheckResult;
 
         foreach ($goods as $good) {
             //добавить остальные параметры и сделать пересчет qty
@@ -252,23 +230,69 @@ class MercuryAPI
             $cash = $sum;
         }
 
-        $this->CloseCheck($buyerEmail, $cash, $ecash);
-
-        return $sum;
+        $result = $this->CloseCheck($buyerEmail, $cash, $ecash);
+        $result['data']['mySum'] = $sum;
+        return $result;
     }
 
 
-    //reset check
+    public function ResetCheck() {
+        $this->lastRequest = __FUNCTION__;
+        $result = $this->CreateRequest(
+            'POST',
+            [
+                "sessionKey" => $this->sessionKey,
+                "command" => "ResetCheck",
+            ]
+        );
 
-
-    //открытие смены
-    public function OpenShift() {
-
+        return $result;
     }
 
-    //закрытие смены
-    public function CloseShift() {
 
+    public function OpenShift(): array {
+        $this->lastRequest = __FUNCTION__;
+        $result = $this->CreateRequest(
+            'POST',
+            [
+                "sessionKey" => $this->sessionKey,
+                "command" => "OpenShift",
+                "printDoc" => true,
+                "cashierInfo" => $this->cashierInfo
+            ]
+        );
+
+        return $result;
+    }
+
+
+    public function CloseShift():array {
+        $this->lastRequest = __FUNCTION__;
+        $result = $this->CreateRequest(
+            'POST',
+            [
+                "sessionKey" => $this->sessionKey,
+                "command" => "CloseShift",
+                "printDoc" => true,
+                "cashierInfo" => $this->cashierInfo
+            ]
+        );
+
+        return $result;
+    }
+
+
+    public function GetGoodsBase() {
+        $this->lastRequest = __FUNCTION__;
+        $result = $this->CreateRequest(
+            'POST',
+            [
+                "sessionKey" => $this->sessionKey,
+                "command" => "GetGoodsBase",
+            ]
+        );
+
+        return $result;
     }
 
 

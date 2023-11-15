@@ -9,8 +9,15 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use app\models\BrandImagesForm;
+use app\models\ClinicForm;
 
 AppAsset::register($this);
+
+$logo = BrandImagesForm::findOne(['imageType' => 1]);
+$ico = BrandImagesForm::findOne(['imageType' => 3]);
+$clinic = ClinicForm::findOne(['id' => 1]);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -20,7 +27,7 @@ AppAsset::register($this);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
-    <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => '/web/images/logo.png']);?>
+    <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => "/web/images/Brand images/$ico->imagePath"]);?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
@@ -30,10 +37,10 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => Html::img("/web/images/Brand images/$logo->imagePath", ['alt' => $clinic->clinicName, 'style' => 'height: 45px; width: 171px; left: 50px; margin-top:-10px;']),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-inverse navbar-fixed-top my-navbar',
         ],
     ]);
     echo Nav::widget([
@@ -80,8 +87,6 @@ AppAsset::register($this);
                     ['label' => 'Отчет по остаткам (магазин)', 'url' => ['/reports/report_ostatki']],
                 ],
 
-//            ['label' => 'Contact', 'url' => ['/site/contact']],
-
             ],
 
             [
@@ -94,15 +99,13 @@ AppAsset::register($this);
                     ['label' => 'Отчет по продажам', 'url' => ['/reports/report_sale']],
 
                 ],
-
-
-
             ],
+            ['label' => 'Клиника', 'url' => ['/clinic/clinicpage']]
     ]]);
     NavBar::end();
     ?>
 
-    <div class="container-fluid">
+    <div class="container-fluid my-content">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

@@ -150,3 +150,11 @@
 	border: 1px;
 	padding: 4px 8px 4px 8px;
 }
+
+.my-navbar {
+    font-size: 150%;
+}
+
+.my-content {
+    background-color: #e6ffff;
+}

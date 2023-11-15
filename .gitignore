@@ -19,6 +19,8 @@ Thumbs.db
 /reports
 /logs
 /uploads
+/widgets/MercuryAPI/SessionKey.json
+
 
 # composer itself is not needed
 composer.phar

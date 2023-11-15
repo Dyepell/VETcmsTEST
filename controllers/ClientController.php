@@ -2,6 +2,7 @@
 
 
 namespace app\controllers;
+
 use app\models\Analys_blood;
 use app\models\AnalysbloodForm;
 use app\models\Anamnez_lifeForm;
@@ -22,14 +23,12 @@ use app\models\Oplata;
 use app\models\OplataForm;
 use app\models\PacientForm;
 use app\models\Poroda;
-use app\models\Pred_uslForm;
 use app\models\PriceForm;
 use app\models\Sale;
 use app\models\SaleForm;
 use app\models\SearchForm;
 use app\models\SearchModel;
 use app\models\SelectForm;
-use app\models\Diagnoz;
 use app\models\Price;
 use app\models\Biohim;
 use app\models\Mocha;
@@ -44,39 +43,19 @@ use app\models\Prihod_tovaraForm;
 use app\models\Prihod_tovara;
 use app\models\Write_off;
 use app\models\WriteOffForm;
-use execut\yii\jui\widget\Renderer;
-use yii\helpers\StringHelper;
-use app\models\Pred_usl;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
-
-
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-
-use app\models\Facility_test;
-
-
 use app\models\Vid;
 use app\models\Vizit;
 use app\models\sl_vakc;
 use app\models\VizitForm;
-use PHPExcel;
-use yii\base\Model;
-use yii\debug\models\timeline\Search;
-use yii\helpers\Url;
-use yii\widgets\Pjax;
-use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
 use app\models\BiohimForm;
-
 use app\models\Pacient;
 use Yii;
-
-use yii\data\Pagination;
+use app\models\BrandImagesForm;
 
 
 class ClientController extends AppController
@@ -85,24 +64,21 @@ class ClientController extends AppController
 
     public function beforeAction($action)
     {
-        
     //     if ($action->id=='index'){
     //         $this->enableCsrfValidation=false;
     //     }
- 
 
     return parent::beforeAction($action);
-    
     }
+
 
     public function actionIndex(){
         $model = new SearchForm();
         if(Yii::$app->request->isPjax){
 
             $test = $_POST[SearchForm];
-
-
             $answer = $test['FAM'];
+
             if ($answer==''){
                 $searchProvider=NULL;
             }else{
@@ -110,33 +86,14 @@ class ClientController extends AppController
                     'query' => Client::find()->where(['like', 'FAM', $answer.'%', false]),
                     'pagination'=>false,
                     'sort'=> ['defaultOrder' => ['NAME' => SORT_ASC]],
-
-
-
                 ]);
-
-
-
-
                 }
 
             $model->load(Yii::$app->request->post());
-
-
-
-
             return $this->render('registration', compact('model', 'answer',  'searchProvider'));
         }
+
         $this->view->title='Регистрация';
-
-
-
-
-
-
-
-
-
         $selectClientId=$_GET['selectClientId'];
         $selectClient=Client::find()->where(['ID_CL'=>$selectClientId])->with('pacients')->all();
         $pacients=Pacient::find()->where(['ID_CL'=>$selectClientId]);
@@ -148,30 +105,24 @@ class ClientController extends AppController
 
             ],
         ]);
-        if(!Yii::$app->request->get('page')){
+
+        if (!Yii::$app->request->get('page')) {
             $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
         }
-//        $clients = Client::find();
-//        $pageCount=$clients->count();
-//        $pages= new Pagination(['totalCount'=>$pageCount, 'pageSize'=>20]);
-//        $clientsPagination=$clients->offset($pages->offset)->limit($pages->limit)->all();
-
-
-
-
 
         return $this->render('registration', compact('pages',  'searchValue', 'model', 'dataProvider', 'selectClient', 'selectClientId'));
     }
+
 
     public function actionClientout(){
         $selectClient =1;
         return '123';
 
     }
+
+
     public function actionAnketa(){
         $this->enableCsrfValidation = false;
-
-
         $clientId=$_GET['clientId'];
         $model = ClientForm::findOne(['ID_CL'=>$clientId]);
         $pacients=Pacient::find()->where(['ID_CL'=>$clientId])->all();
@@ -181,31 +132,23 @@ class ClientController extends AppController
 
         if ( $model->load(Yii::$app->request->post()) ){
             if ($model->save()){
-
                 return $this->refresh();
             }
         }
 
-
         if (Yii::$app->request->post(PacientForm)!=null){
-
-
             $PAC= Yii::$app->request->post(PacientForm);
             $PAC=$PAC['$i'];
             if ($PAC['ID_PAC']==''){
                 if ( $newPacient->load(Yii::$app->request->post()) ){
                     $newPacient->DATE=date('Y-m-d');
                     if ($newPacient->save()){
-
                         return $this->refresh();
                     }
                 }
             }
 
-
-
             $selectPacient=PacientForm::find()->where(['ID_PAC'=>$PAC['ID_PAC']])->all();
-
             $selectPacient[0]->KLICHKA=$PAC['KLICHKA'];
             $selectPacient[0]->ID_VID=$PAC['ID_VID'];
             $selectPacient[0]->ID_POR=$PAC['ID_POR'];
@@ -214,31 +157,15 @@ class ClientController extends AppController
             $selectPacient[0]->VOZR=$PAC['VOZR'];
             $selectPacient[0]->ID_LDOC=$PAC['ID_LDOC'];
             $selectPacient[0]->PRIMECH=$PAC['PRIMECH'];
-
-
-
-
             $selectPacient[0]->save();
             $this->refresh();
-
         }
-
-
-
-
-//        if ( $pacModel[]->load(Yii::$app->request->post()) ){
-//            if ($pacModel[Yii::$app->request->post(['$i'])]->save()){
-//
-//                return $this->refresh();
-//            }
-//        }
-
-
 
         return $this->render('anketa', compact('clientId', 'model', 'pacients', 'pacModel', 'newPacient'));
     }
-    public function actionClientadd(){
 
+
+    public function actionClientadd(){
         $model = new ClientForm();
         $model->FIRST_DATE_N=date("Y-m-d");
         if ( $model->load(Yii::$app->request->post()) ){
@@ -250,99 +177,102 @@ class ClientController extends AppController
         }else{
             return $this->render('anketa', compact('clientId', 'model'));
         }
-
-
-
     }
+
+
     public function actionClientdelete(){
         $clientId=$_GET['clientId'];
-
         $model=ClientForm::findOne(['ID_CL'=>$clientId]);
         $visits=Vizit::find()->where(['ID_CL'=>$model->ID_CL])->all();
         $pacients=Pacient::find()->where(['ID_CL'=>$model->ID_CL])->all();
+
         foreach ($pacients as $pac){
             $pac->delete();
         }
+
         foreach ($visits as $visit){
             $visit->delete();
         }
 
         $facility=Facility::find()->where(['ID_CL'=>$model->ID_CL])->all();
+
         foreach ($facility  as $fac){
             $fac->delete();
         }
+
         $oplata=Oplata::find()->where(['ID_CL'=>$clientId])->all();
+
         foreach ($oplata as $item) {
             $item->delete();
         }
+
         $model->delete();
         $this->redirect("index.php?r=client");
-
-
     }
+
+
     public function actionPacientdelete(){
         $clientId=$_GET['clientId'];
         $deletePacient=$_GET['deletePacient'];
         $model=PacientForm::findOne(['ID_PAC'=>$deletePacient]);
-
         $visits=Vizit::find()->where(['ID_PAC'=>$deletePacient])->all();
+
         foreach ($visits as $item) {
             $item->delete();
         }
+
         $oplata=Oplata::find()->where(['ID_PAC'=>$deletePacient])->all();
+
         foreach ($oplata as $item) {
             $item->delete();
         }
 
         $facility=Facility::find()->where(['ID_PAC'=>$model->ID_PAC])->all();
+
         foreach ($facility  as $fac){
             $fac->delete();
         }
 
         $model->delete();
         $this->redirect("index.php?r=client/anketa&clientId=".$clientId);
-
-
     }
 
     public function actionVisits(){
-
        $pacientId=$_GET['pacientId'];
        $clientId=$_GET['clientId'];
-        $dataProvider = new ActiveDataProvider([
-            'query' => Vizit::find()->where(['ID_PAC'=>$pacientId])->with('diagnoz'),
-            'pagination'=>[
-                'pageSize'=>10,
-            ],
 
-        ]);
-        $istbolProvider = new ActiveDataProvider([
+       $dataProvider = new ActiveDataProvider([
+           'query' => Vizit::find()->where(['ID_PAC'=>$pacientId])->with('diagnoz'),
+           'pagination'=>[
+               'pageSize'=>10,
+           ],
+       ]);
+
+       $istbolProvider = new ActiveDataProvider([
             'query' => Istbol::find()->where(['ID_PAC'=>$pacientId]),
             'pagination' => false,
+       ]);
 
+       if(!Yii::$app->request->get('page')){
+           $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
+       }
 
-        ]);
-        if(!Yii::$app->request->get('page')){
-            $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
-        }
-        $vakcineProvider = new ActiveDataProvider([
-            'query' => Sl_vakc::find()->where(['ID_PAC'=>$pacientId])->orderBy(['ID_SLV'=>SORT_ASC]),
-            'pagination' => false,
+       $vakcineProvider = new ActiveDataProvider([
+           'query' => Sl_vakc::find()->where(['ID_PAC'=>$pacientId])->orderBy(['ID_SLV'=>SORT_ASC]),
+           'pagination' => false,
+       ]);
 
-        ]);
+       $pacient=Pacient::findOne(['ID_PAC'=>$pacientId]);
+       $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
+       $this->view->title='Визиты: '.$pacient->KLICHKA;
 
-
-        $pacient=Pacient::findOne(['ID_PAC'=>$pacientId]);
-        $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
-        $this->view->title='Визиты: '.$pacient->KLICHKA;
-
-        return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider'));
+       return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider'));
     }
+
 
     public function actionVisit(){
         if ($_GET['ID_VISIT']!=NULL){
             $visit=VizitForm::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
-
             $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
             $doctors=Doctor::find()->all();
             $doc=[];
@@ -352,33 +282,28 @@ class ClientController extends AppController
             {
                 $doc[$doctors[$i]->ID_DOC]=$doctors[$i]->NAME;
             }
+
             $prFacProvider = new ActiveDataProvider([
                 'query' => Facility::find()->where(['ID_PAC'=>$pacient->ID_PAC]),
                 'pagination' => false,
-
-
             ]);
+
             $oplataProvider = new ActiveDataProvider([
                 'query' => Oplata::find()->where(['ID_VIZIT'=>$visit->ID_VISIT]),
                 'pagination' => false,
-
-
             ]);
+
             $FacilityProvider = new ActiveDataProvider([
                 'query' => Facility::find()->where(['ID_VISIT'=>$visit->ID_VISIT]),
                 'pagination' => false,
-
-
             ]);
+
             $prVisit=Vizit::find()->where(['ID_PAC'=>$pacient->ID_PAC])->andwhere(['<', 'ID_VISIT', $visit->ID_VISIT])->orderBy(['ID_VISIT'=>SORT_DESC])->limit(1)->all();
 
             $prFacilityProvider = new ActiveDataProvider([
                 'query' => Facility::find()->where(['ID_VISIT'=>$prVisit[0]->ID_VISIT]),
                 'pagination' => false,
-
-
             ]);
-
 
             $fac =Facility::find()->where(['ID_VISIT'=>$visit->ID_VISIT])->all();
 
@@ -388,6 +313,7 @@ class ClientController extends AppController
 
 
             ]);
+
         $visit->DATE=date("d.m.Y", strtotime($visit->DATE));
         }else{
             $visit=new VizitForm();
@@ -400,10 +326,8 @@ class ClientController extends AppController
         }
 
         if ( $visit->load(Yii::$app->request->post()) ){
-
             $visit->DATE=date("Y-m-d", strtotime($visit->DATE));
-            if ($visit->SUMMAO!=''){
-
+            if ($visit->SUMMAO!='') {
                 $client=Client::findOne(['ID_CL'=>$visit->ID_CL]);
                 $oplata=new OplataForm();
                 $oplata->ID_CL=$client->ID_CL;
@@ -412,7 +336,8 @@ class ClientController extends AppController
                 $oplata->SUMM=$visit->SUMMAO;
                 $oplata->ID_VIZIT=$visit->ID_VISIT;
                 $oplata->ID_PAC=$visit->ID_PAC;
-                if($visit->IsDolg){
+
+                if ($visit->IsDolg) {
                     $oplata->IsDolg=1;
                 }
                 $oplata->save();
@@ -431,16 +356,12 @@ class ClientController extends AppController
             }
         }
 
-
-
-
         $this->view->title='Визит: '.$pacient->KLICHKA;
         return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider', 'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc'));
     }
 
+
     public function actionPrice(){
-
-
         $teraphyProvider = new ActiveDataProvider([
             'query' => Price::find()->where(['ID_SPDOC'=>'1']),
             'pagination' => false,
@@ -490,103 +411,72 @@ class ClientController extends AppController
 
         ]);
 
-
-
         return $this->render('price', compact('teraphyProvider', 'surgaryProvider',
             'uziProvider', 'medicinesProvider', 'vakcineProvider', 'degProvider','analysisProvider',
         'feedProvider'));
     }
+
+
     public function actionAddprice(){
         if ($_GET['ID_PR']!=NULL){
             $model=PriceForm::findOne(['ID_PR'=>$_GET['ID_PR']]);
-
-
         }else{
             $model=new PriceForm();
             $model->DATA=date('d.m.Y');
         }
 
-            if ( $model->load(Yii::$app->request->post()) ){
-
-                if ($model->save()){
-
-                    return $this->redirect("index.php?r=client/price");
-                }
+        if ( $model->load(Yii::$app->request->post()) ){
+            if ($model->save()){
+                return $this->redirect("index.php?r=client/price");
             }
+        }
+
         return $this->render('addPrice', compact('model'));
     }
+
+
     public function  actionPricedelete(){
         $model=Price::findOne(['ID_PR'=>$_GET['ID_PR']]);
         $model->delete();
         return $this->redirect("index.php?r=client/price");
     }
+
+
     public function actionDoctor(){
         $dataProvider = new ActiveDataProvider([
             'query' => Doctor::find(),
             'pagination' => false,
-
-
         ]);
+
         return $this->render('doctor', compact('dataProvider'));
     }
+
+
     public function actionAdddoctor(){
         if ($_GET['ID_DOC']!=NULL){
             $model = DoctorForm::findOne(['ID_DOC'=>$_GET['ID_DOC']]);
         }else{
             $model = new DoctorForm();
         }
+
         if ( $model->load(Yii::$app->request->post()) ){
-
             if ($model->save()){
-
                 return $this->redirect("index.php?r=client/doctor");
             }
         }
+
         return $this->render('adddoctor', compact('model'));
     }
+
+
     public function  actionDoctordelete(){
         $model=Doctor::findOne(['ID_DOC'=>$_GET['ID_DOC']]);
         $model->delete();
         return $this->redirect("index.php?r=client/doctor");
     }
+
+
     public function actionFacility(){
-//        $facility = new FacilityForm();
-//        $facility->DATA=date("d.m.Y");
-//        $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
-//        $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
-//        $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
-//        $facility->ID_CL=$client->ID_CL;
-//        $facility->ID_PAC=$pacient->ID_PAC;
-//        $ID_PAC=$facility->ID_PAC;
-//
-//        if ( $facility->load(Yii::$app->request->post()) ){
-//            $facility->ID_VISIT=$_GET['ID_VISIT'];
-//            $price=Price::findOne(['ID_PR'=>$facility->ID_PR]);
-//            $facility->PRICE=$price->PRICE;
-//            $facility->SUMMA=$price->PRICE * $facility->KOL;
-//            $visit->DOLG=$visit->DOLG+$facility->SUMMA;
-//            $visit->SUMMAV=$visit->SUMMAV + $facility->SUMMA;
-//
-//            $facility->DATA=date("Y-m-d", strtotime($facility->DATA));
-//            if($facility->DATASL!=NULL){
-//                $facility->DATASL=date('Y-m-d', strtotime($facility->DATASL));
-//            }
-//            if($facility->DATASL==''){
-//                $facility->DATASL=NULL;
-//            }
-//
-//            if($visit->DATE_OPL!=NULL){
-//                $visit->DATE_OPL='';
-//            }
-//
-//
-//
-//            $visit->save();
-//            if ($facility->save()){
-//
-//                return $this->redirect("index.php?r=client/visit&ID_VISIT=".$_GET['ID_VISIT'].'&ID_PAC='.$ID_PAC);
-//            }
-//        }
         $searchModel= new SearchModel();
         $dataProvider=$searchModel->search(Yii::$app->request->get());
         $dataProvider->pagination=false;
@@ -599,34 +489,31 @@ class ClientController extends AppController
         $doc[$doctors[$i]->ID_DOC]=$doctors[$i]->NAME;
         }
 
-
-
         return $this->render('facility', compact('facility', 'dataProvider', 'searchModel', 'doc', 'uslugi'));
     }
+
+
     public function actionIstbol(){
         if ($_GET['ID_IST']!=NULL){
             $istbol = IstbolForm::findOne(['ID_IST'=>$_GET['ID_IST']]);
             $pacient = Pacient::findOne(['ID_PAC'=>$istbol->ID_PAC]);
-
-
         }else{
-
             $istbol =new IstbolForm();
             $istbol->DIST=date("d.m.Y");
             $pacient = Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
             $istbol->ID_PAC=$pacient->ID_PAC;
         }
 
-
         if ( $istbol->load(Yii::$app->request->post()) ){
-
             if ($istbol->save()){
-
                 return $this->redirect("index.php?r=client/istbol&ID_IST=".$istbol->ID_IST);
             }
         }
+
         return $this->render('istbol', compact('istbol', 'pacient'));
     }
+
+
     public function  actionIstboldelete(){
         $model=Istbol::findOne(['ID_IST'=>$_GET['ID_IST']]);
         $pacient=Pacient::findOne(['ID_PAC'=>$model->ID_PAC]);
@@ -634,15 +521,15 @@ class ClientController extends AppController
         return $this->redirect("index.php?r=client/anketa&clientId=".$pacient->ID_CL);
     }
 
+
     public function actionAnalysis(){
         $pacient=Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
         $this->view->title='Исследования: '.$pacient->KLICHKA;
         $bloodProvider = new ActiveDataProvider([
             'query' => Analys_blood::find()->where(['ID_PAC'=>$pacient->ID_PAC]),
             'pagination' => false,
-
-
         ]);
+
         $BiohimProvider = new ActiveDataProvider([
             'query' => Biohim::find()->where(['ID_PAC'=>$pacient->ID_PAC]),
             'pagination' => false,
@@ -658,18 +545,17 @@ class ClientController extends AppController
         $UziProvider = new ActiveDataProvider([
             'query' => Uzi::find()->where(['ID_PAC'=>$pacient->ID_PAC]),
             'pagination' => false,
-
-
         ]);
         $OtherProvider = new ActiveDataProvider([
             'query' => Other_isl::find()->where(['ID_PAC'=>$pacient->ID_PAC]),
             'pagination' => false,
-
-
         ]);
+
         return $this->render('analysis', compact('pacient', 'bloodProvider', 'BiohimProvider', 'MochaProvider',
         'UziProvider', 'OtherProvider'));
     }
+
+
     public function actionBlood(){
         if ($_GET['ID_BLOOD']!=NULL){
             $blood = AnalysbloodForm::findOne(['ID_BLOOD'=>$_GET['ID_BLOOD']]);
@@ -684,47 +570,39 @@ class ClientController extends AppController
 
         if ( $blood->load(Yii::$app->request->post()) ){
             $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
+
             if ($blood->save()){
-
                 $ID_BLOOD=$blood->ID_BLOOD;
-
-
                 return $this->redirect('index.php?r=client/blood&ID_PAC='.$pacient->ID_PAC.'&ID_BLOOD='.$ID_BLOOD);
             }
         }
+
         return $this->render('blood', compact('blood', 'pacient'));
     }
+
+
     public function actionBlooddelete(){
         $blood = Analys_blood::findOne(['ID_BLOOD'=>$_GET['ID_BLOOD']]);
         $ID_PAC=$blood->ID_PAC;
         $blood->delete();
         return $this->redirect('index.php?r=client/analysis&ID_PAC='.$ID_PAC);
     }
+
+
     public function actionFacilitydelete(){
         $facility=Facility::findOne(['ID_FAC'=>$_GET['ID_FAC']]);
-
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $summ=$facility->SUMMA;
         $fraction=($summ)-floor($summ);
+
         if($fraction>0){
             $summ= $summ-$fraction+1;
         }
 
         $visit->SUMMAV=$visit->SUMMAV-$summ;
         $visit->DOLG=$visit->DOLG-$summ;
-
-//        $excat=Expense_catalog::find()->all();
-//        $ex=[];
-//        foreach ($excat as $item){
-//            array_push($ex, $item->ID_PR);
-//        }
-//        if( in_array($facility->ID_PR, $ex)){
-//            $expense = Expense_catalog::findOne(['ID_PR' => $facility->ID_PR]);
-//            $expense->KOL=$expense->KOL+$facility->KOL;
-//            $expense->SUMM=$expense->PRICE*$expense->KOL;
-//            $expense->save();
-//        }
         $price=Price::findOne(['ID_PR'=>$facility->ID_PR]);
+
         if($price->IsCount==1){
             $price->KOL+=$facility->KOL;
             $price->save();
@@ -753,13 +631,13 @@ class ClientController extends AppController
         if ( $blood->load(Yii::$app->request->post()) ){
             $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
             if ($blood->save()){
-
                 $ID_BIOHIM=$blood->ID_BIOHIM;
                 return $this->redirect('index.php?r=client/biohim&ID_PAC='.$pacient->ID_PAC.'&ID_BIOHIM='.$ID_BIOHIM);
             }
         }
         return $this->render('biohim', compact('blood', 'pacient'));
     }
+
 
     public function actionBiohimdelete(){
         $blood = Biohim::findOne(['ID_BIOHIM'=>$_GET['ID_BIOHIM']]);
@@ -769,12 +647,10 @@ class ClientController extends AppController
     }
 
 
-
     public function actionMocha(){
         if ($_GET['ID_MOCHA']!=NULL){
             $blood = MochaForm::findOne(['ID_MOCHA'=>$_GET['ID_MOCHA']]);
             $blood->DATE = date('d.m.Y', strtotime($blood->DATE));
-
         }else{
             $blood=new MochaForm();
             $blood->ID_PAC=$_GET['ID_PAC'];
@@ -786,7 +662,6 @@ class ClientController extends AppController
         if ( $blood->load(Yii::$app->request->post()) ){
             $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
             if ($blood->save()){
-
                 $ID_MOCHA=$blood->ID_MOCHA;
                 return $this->redirect('index.php?r=client/mocha&ID_PAC='.$pacient->ID_PAC.'&ID_MOCHA='.$ID_MOCHA);
             }
@@ -804,7 +679,7 @@ class ClientController extends AppController
 
 
     public function actionUzi(){
-        if ($_GET['ID_UZI']!=NULL){
+        if ($_GET['ID_UZI']!=NULL) {
             $blood = UziForm::findOne(['ID_UZI'=>$_GET['ID_UZI']]);
             $blood->DATE = date('d.m.Y', strtotime($blood->DATE));
         }else{
@@ -818,7 +693,6 @@ class ClientController extends AppController
         if ( $blood->load(Yii::$app->request->post()) ){
             $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
             if ($blood->save()){
-
                 $ID_UZI=$blood->ID_UZI;
                 return $this->redirect('index.php?r=client/uzi&ID_PAC='.$pacient->ID_PAC.'&ID_UZI='.$ID_UZI);
             }
@@ -835,80 +709,80 @@ class ClientController extends AppController
 
 
 
-public function actionOther(){
-    if ($_GET['ID_OTHER']!=NULL){
-        $blood = Other_islForm::findOne(['ID_OTHER'=>$_GET['ID_OTHER']]);
-        $blood->DATE = date('d.m.Y', strtotime($blood->DATE));
-    }else{
-        $blood=new Other_islForm();
-        $blood->ID_PAC=$_GET['ID_PAC'];
-        $blood->DATE=date('d.m.Y');
-    }
-
-    $pacient=Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
-
-    if ( $blood->load(Yii::$app->request->post()) ){
-        $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
-        if ($blood->save()){
-
-            $ID_OTHER=$blood->ID_OTHER;
-            return $this->redirect('index.php?r=client/other&ID_PAC='.$pacient->ID_PAC.'&ID_OTHER='.$ID_OTHER);
+    public function actionOther() {
+        if ($_GET['ID_OTHER']!=NULL) {
+            $blood = Other_islForm::findOne(['ID_OTHER'=>$_GET['ID_OTHER']]);
+            $blood->DATE = date('d.m.Y', strtotime($blood->DATE));
+        }else{
+            $blood=new Other_islForm();
+            $blood->ID_PAC=$_GET['ID_PAC'];
+            $blood->DATE=date('d.m.Y');
         }
-    }
 
-    return $this->render('other', compact('blood', 'pacient'));
-}
+        $pacient=Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
 
-public function actionOtherdelete(){
-    $blood = Other_isl::findOne(['ID_OTHER'=>$_GET['ID_OTHER']]);
-    $ID_PAC=$blood->ID_PAC;
-    $blood->delete();
-    return $this->redirect('index.php?r=client/analysis&ID_PAC='.$ID_PAC);
-}
-
-
-public function actionCatalog(){
-    $KattovProvider = new ActiveDataProvider([
-        'query' => Kattov::find()->orderBy(['NAME' => SORT_ASC]),
-        'pagination' => false,
-    ]);
-
-    $model=new TovarForm();
-    if ( $model->load(Yii::$app->request->post()) ){
-
-        if ($model->save()){
-
-            return $this->refresh();
+        if ( $blood->load(Yii::$app->request->post()) ){
+            $blood->DATE=date('Y-m-d', strtotime($blood->DATE));
+            if ($blood->save()){
+                $ID_OTHER=$blood->ID_OTHER;
+                return $this->redirect('index.php?r=client/other&ID_PAC='.$pacient->ID_PAC.'&ID_OTHER='.$ID_OTHER);
+            }
         }
+
+        return $this->render('other', compact('blood', 'pacient'));
     }
+
+
+    public function actionOtherdelete(){
+        $blood = Other_isl::findOne(['ID_OTHER'=>$_GET['ID_OTHER']]);
+        $ID_PAC=$blood->ID_PAC;
+        $blood->delete();
+        return $this->redirect('index.php?r=client/analysis&ID_PAC='.$ID_PAC);
+    }
+
+
+    public function actionCatalog(){
+        $KattovProvider = new ActiveDataProvider([
+            'query' => Kattov::find()->orderBy(['NAME' => SORT_ASC]),
+            'pagination' => false,
+        ]);
+
+        $model=new TovarForm();
+        if ( $model->load(Yii::$app->request->post()) ){
+            if ($model->save()){
+                return $this->refresh();
+            }
+        }
+
         return $this->render('catalog', compact('KattovProvider', 'model'));
-}
+    }
+
+
     public function actionTovardelete(){
         $ID_TOV=$_GET['ID_TOV'];
-
         $model=TovarForm::findOne(['ID_TOV'=>$ID_TOV]);
         $model->delete();
         $this->redirect("index.php?r=client/catalog");
-
-
     }
+
 
     public function actionPrihod_tovara(){
         $PrihodProvider = new ActiveDataProvider([
             'query' => Prihod_tovara::find(),
             'pagination' => [
                 'pageSize' => 100,
-
             ],
         ]);
+
         if(!Yii::$app->request->get('page')){
             $PrihodProvider->pagination->page = ceil($PrihodProvider->getTotalCount() / $PrihodProvider->pagination->pageSize) - 1;
         }
+
         $date=date('d.m.Y');
+
         return $this->render('prihod_tovara', compact('PrihodProvider', 'date'));
     }
     public function actionPrihod(){
-
         if ($_GET['ID_PRIHOD']!=NULL){
             $model=Prihod_tovara::findOne(['ID_PRIHOD'=>$_GET['ID_PRIHOD']]);
             $model->EXPIRATION_DATE=date("d.m.Y", strtotime($model->EXPIRATION_DATE));
@@ -920,57 +794,50 @@ public function actionCatalog(){
         }
 
         if ( $model->load(Yii::$app->request->post()) ){
-
             $newParams=(Yii::$app->request->post('Prihod_tovara'));
-
             $model->SUMM=$model->KOL*$model->SELL_PRICE;
             $model->DATE=date("Y-m-d", strtotime( $model->DATE));
-                if($newParams[EXPIRATION_DATE]!=NULL){
-                    $model->EXPIRATION_DATE = date("Y-m-d", strtotime($newParams[EXPIRATION_DATE]));
-                }else{
-                    $model->EXPIRATION_DATE = date("Y-m-d", strtotime($model->EXPIRATION_DATE));
-                }
+            if($newParams[EXPIRATION_DATE]!=NULL){
+                $model->EXPIRATION_DATE = date("Y-m-d", strtotime($newParams[EXPIRATION_DATE]));
+            }else{
+                $model->EXPIRATION_DATE = date("Y-m-d", strtotime($model->EXPIRATION_DATE));
+            }
 
             if($newParams[PRIM]!=NULL){
                 $model->PRIM=$newParams[PRIM];
             }
 
-
-
             if ($model->save()){
-
-
                 return $this->redirect("index.php?r=client/prihod_tovara");
             }
         }
+
         return $this->render('prihod', compact('model'));
     }
 
+
     public function actionPrihoddelete(){
         $ID_PRIHOD=$_GET['ID_PRIHOD'];
-
         $model=Prihod_tovaraForm::findOne(['ID_PRIHOD'=>$ID_PRIHOD]);
-
         $model->delete();
         $this->redirect("index.php?r=client/prihod_tovara");
-
-
     }
+
+
     public function actionTovar(){
         if ($_GET['ID_TOV']!=NULL){
             $model=KattovForm::findOne(['ID_TOV'=>$_GET['ID_TOV']]);
-
         }else{
             $model=new KattovForm();
         }
 
         if ( $model->load(Yii::$app->request->post()) ){
-
             if ($model->save()){
-
                 return $this->redirect("index.php?r=client/catalog");
             }
         }
+
+
         return $this->render('tovar', compact('model'));
     }
 
@@ -979,69 +846,38 @@ public function actionCatalog(){
             'query' => Sale::find(),
             'pagination' => [
                 'pageSize' => 10,
-
             ],
         ]);
+
         if(!Yii::$app->request->get('page')){
             $SaleProvider->pagination->page = ceil($SaleProvider->getTotalCount() / $SaleProvider->pagination->pageSize) - 1;
         }
+
         return $this->render('sale', compact('SaleProvider'));
     }
+
 
     public function actionNew_add_sale(){
         if ($_GET['ID_SALE']!=NULL){
             $model=SaleForm::findOne(['ID_SALE'=>$_GET['ID_SALE']]);
-
         }else{
             $model=new SaleForm();
             $model->DATE=date("d.m.Y");
             $model->SKIDKA=0;
 
         }
-//        $pr=Prihod_tovara::find()->joinWith('tovar')->orderBy([
-//            'NAME'=>SORT_ASC,
-//            'KOL'=>SORT_DESC,
-//            ])->all();
-//
-//        $prihod=[];
-//        foreach ($pr as $item){
-//            $prihod[$item->ID_PRIHOD]=$item->tovar->NAME.' (остаток - '.$item->KOL.'; цена продажи - '.$item->SELL_PRICE.' руб.)';
-//            if($item->PRIM!=''){
-//                $prihod[$item->ID_PRIHOD]=$prihod[$item->ID_PRIHOD].'Примечание - '.$item->PRIM.'';
-//            }
-//        }
-//
-//
-//        if ( $model->load(Yii::$app->request->post()) ){
-//
-//            $model->DATE=date('Y-m-d', strtotime($model->DATE));
-//            $tovar=Prihod_tovara::findOne(['ID_PRIHOD'=>$model->ID_PRIHOD]);
-//            $tovar->KOL=$tovar->KOL-$model->KOL;
-//
-//            $model->SUMM=($model->KOL*$tovar->SELL_PRICE)*((100-$model->SKIDKA)/100);
-//            $fraction=($model->SUMM)-floor($model->SUMM);
-//            if($fraction>0){
-//                $model->SUMM= $model->SUMM-$fraction+1;
-//            }
-//            $tovar->save();
-//
-//            if ($model->save()){
-//
-//                return $this->redirect("index.php?r=client/sale");
-//            }
-//        }
+
         function dump($arr){
             echo '<pre>'.print_r($arr, true).'</pre>';
         }
+
         $queryResult=Prihod_tovara::find()->joinWith('tovar')->orderBy([
             'NAME'=>SORT_ASC,
             'KOL'=>SORT_DESC,
-
         ])->all();
 
         foreach ($queryResult as $item){
             $salesProducts[$item->ID_TOV][name]=$item->tovar->NAME;
-
             $salesProducts[$item->ID_TOV][prihods][$item->ID_PRIHOD]=[
                 'ID_PRIHOD'=>$item->ID_PRIHOD,
                 'sellPrice'=>$item->SELL_PRICE,
@@ -1050,20 +886,20 @@ public function actionCatalog(){
                 'date'=>$item->DATE,
             ];
         }
-        $doctors=Doctor::find()->where(["STATUS_R"=>1])->all();
 
+        $doctors=Doctor::find()->where(["STATUS_R"=>1])->all();
 
         return $this->render('new_add_sale', compact('model', 'salesProducts', 'doctors'));
     }
-    public function actionNew_sale_form(){
 
+
+    public function actionNew_sale_form(){
         $ID_PRIHOD=$_GET["ID_PRIHOD"];
         $ID_DOC=$_GET["ID_DOC"];
         $KOL=$_GET["KOL"];
         $DISCOUNT_PROCENT=$_GET["DISCOUNT_PROCENT"];
         $VID_OPL=$_GET["VID_OPL"];
         $DATE=$_GET["DATE"];
-
         $model=new SaleForm();
         $model->ID_PRIHOD=$ID_PRIHOD;
         $model->SOTRUDNIK=$ID_DOC;
@@ -1073,9 +909,9 @@ public function actionCatalog(){
         $model->DATE=date('Y-m-d', strtotime($DATE));
         $tovar=Prihod_tovara::findOne(['ID_PRIHOD'=>$ID_PRIHOD]);
         $tovar->KOL=$tovar->KOL-$KOL;
-
         $model->SUMM=($model->KOL*$tovar->SELL_PRICE)*((100-$model->SKIDKA)/100);
         $fraction=($model->SUMM)-floor($model->SUMM);
+
         if($fraction>0){
             $model->SUMM= $model->SUMM-$fraction+1;
         }
@@ -1086,6 +922,7 @@ public function actionCatalog(){
         return $this->redirect("index.php?r=client/sale");
     }
 
+
     public function  actionSaledelete(){
         $model=Sale::findOne(['ID_SALE'=>$_GET['ID_SALE']]);
         $prihod=Prihod_tovara::findOne(['ID_PRIHOD'=>$model->ID_PRIHOD]);
@@ -1095,17 +932,14 @@ public function actionCatalog(){
         return $this->redirect("index.php?r=client/sale");
     }
 
+
     public function actionReport_ostatki_form(){
-
         Yii::setAlias('@reports', Yii::$app->basePath.'/reports');
-
         $spreadsheet=new Spreadsheet();
         $sheet=$spreadsheet->getActiveSheet();
         $tovar=Kattov::find()->orderBy(['NAME'=>SORT_ASC])->all();
         $sheet->setCellValue('A1', 'ЗооДоктор');
         $sheet->setCellValue('D1', date("d.m.Y"));
-
-
         $sheet->setCellValue('A2', 'Отчет по остаткам товара');
         $spreadsheet->getActiveSheet()->getStyle('A')->getAlignment()->setWrapText(true);
         $titles=[
@@ -1121,16 +955,16 @@ public function actionCatalog(){
                 'name'=>'Цена продажи',
                 'cell'=>'C',
             ],
-
-
-
         ];
+
         for ($j = 0; $j < count($titles); $j++) {
             $string = $titles[$j]['name'];
             $cellLatter = $titles[$j]['cell'] . 4;
             $sheet->setCellValue($cellLatter, $string);
         }
+
         $activeRow=4;
+
         for($i=0;$i<count($tovar); $i++){
             $activeRow++;
             $cellA='A'.$activeRow;
@@ -1141,21 +975,14 @@ public function actionCatalog(){
             $sheet->setCellValue($cellC, $tovar[$i]->PRICE);
             $sheet->getColumnDimension('A')->setWidth(42);
             $sheet->getColumnDimension('C')->setWidth(14);
-
-
         }
 
         $sheet->getStyle('A4:' . $cellC)
             ->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-
         $filename='/Отчет по остаткам товара от '.date('d.m.Y').'.xlsx';
-
-
         $writer = new Xlsx($spreadsheet);
         $writer->save(Yii::getAlias('@reports').$filename);
         $path = \Yii::getAlias('@reports') ;
-
         $file = $path.$filename;
 
         if (file_exists($file)) {
@@ -1163,30 +990,22 @@ public function actionCatalog(){
         }else {
             throw new \Exception('Файл не найден');
         }
-
-
-
     }
 
+
     public function actionReport_prihod(){
-
         Yii::setAlias('@reports', Yii::$app->basePath.'/reports');
-
         $spreadsheet=new Spreadsheet();
         $sheet=$spreadsheet->getActiveSheet();
         $firstdate= ($_GET['FIRST_DATE']);
         $secondtdate= ($_GET['SECOND_DATE']);
-
-
         $firstdate =date("Y-m-d", strtotime($firstdate));
         $secondtdate =date("Y-m-d", strtotime($secondtdate));
-
         $prihod=Prihod_tovara::find()->where(['between', 'DATE', $firstdate, $secondtdate])->all();
         $sheet->setCellValue('A1', 'ЗооДоктор');
         $sheet->setCellValue('D1', date("d.m.Y"));
-
-
         $sheet->setCellValue('A2', 'Отчет по поставкам товара c '.date('d.m.Y', strtotime($firstdate)).' по '.date('d.m.Y', strtotime($secondtdate)));
+
         $titles=[
             [
                 'name'=>'Дата',
@@ -1208,17 +1027,17 @@ public function actionCatalog(){
                 'name'=>'Сумма',
                 'cell'=>'E',
             ]
-
-
-
         ];
+
         for ($j = 0; $j < count($titles); $j++) {
             $string = $titles[$j]['name'];
             $cellLatter = $titles[$j]['cell'] . 4;
             $sheet->setCellValue($cellLatter, $string);
         }
+
         $activeRow=4;
         $totalSumm=0;
+
         for($i=0;$i<count($prihod); $i++){
             $activeRow++;
             $tovar=Kattov::findOne(['ID_TOV'=>$prihod[$i]->ID_TOV]);
@@ -1236,9 +1055,8 @@ public function actionCatalog(){
             $sheet->getColumnDimension('A')->setWidth(11);
             $sheet->getColumnDimension('B')->setWidth(40);
             $sheet->getColumnDimension('D')->setWidth(14);
-
-
         }
+
         $activeRow++;
         $cellA='A'.$activeRow;
         $cellD='D'.$activeRow;
@@ -1251,11 +1069,9 @@ public function actionCatalog(){
 
         $filename='/Отчет по поставкам товара c '.date('d.m.Y', strtotime($firstdate)).' по '.date('d.m.Y', strtotime($secondtdate)).'.xlsx';
 
-
         $writer = new Xlsx($spreadsheet);
         $writer->save(Yii::getAlias('@reports').$filename);
         $path = \Yii::getAlias('@reports') ;
-
         $file = $path.$filename;
 
         if (file_exists($file)) {
@@ -1263,35 +1079,34 @@ public function actionCatalog(){
         }else {
             throw new \Exception('Файл не найден');
         }
-
-
-
     }
+
+
     public function actionVisitdelete(){
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $idClient=$visit->ID_CL;
         $fasility=Facility::find()->where(['ID_VISIT'=>$visit->ID_VISIT])->all();
+
         foreach ($fasility as $fac){
             $fac->delete();
         }
+
         $oplata=Oplata::find()->where(['ID_VIZIT'=>$visit->ID_VISIT])->all();
+
         foreach ($oplata as $item){
             $item->delete();
         }
+
         $visit->delete();
+
         return $this->redirect('index.php?r=client/anketa&clientId='.$idClient);
 
     }
 
+
     public function actionNew_facility(){
         $ID_VISIT=$_GET['ID_VISIT'];
         $visit=Vizit::findOne(['ID_VISIT'=>$ID_VISIT]);
-//        $excat=Expense_catalog::find()->all();
-//        $ex=[];
-//        foreach ($excat as $item){
-//            array_push($ex, $item->ID_PR);
-//        }
-
         $doctor=$_GET['doctor'];
 
        foreach ($_GET as $key => $item) {
@@ -1308,10 +1123,8 @@ public function actionCatalog(){
                    $facility->SUMMA=round($facility->KOL*$facility->PRICE,2);
                    $facility->DATA=date('Y-m-d');
                    $facility->ID_VISIT=$ID_VISIT;
-
-
-
                    $procedure=Price::findOne(['ID_PR'=>$facility->ID_PR]);
+
                    if($procedure->ID_SPDOC==5&&$_GET['DATASL']!=''){
                        $slVakc=new Sl_vakc();
                        $slVakc->ID_PAC=$visit->ID_PAC;
@@ -1319,52 +1132,40 @@ public function actionCatalog(){
                        $slVakc->NAME=$procedure->NAME;
                        $slVakc->ID_PR=$procedure->ID_PR;
                        $slVakc->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
-
                        $slVakc->save();
-
                    }
+
                    $facility->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
+
                    if($_GET['DISCOUNT']==''){
                        $_GET['DISCOUNT']=0;
                    }
+
                    //скидка от 25.01.2020
                    $facility->DISCOUNT_PROCENT=  $_GET['DISCOUNT'];
-
-
-
                    $facility->DISCOUNT_SUMM=$facility->KOL*$facility->PRICE;
-
                    $visit->SUMM_BEFORE_DISCOUNT=$visit->SUMM_BEFORE_DISCOUNT+$facility->DISCOUNT_SUMM;
-
                    $facility->SUMMA=$facility->DISCOUNT_SUMM*((100-$facility->DISCOUNT_PROCENT)/100);
-
                    $fraction=($facility->SUMMA)-floor($facility->SUMMA);
+
                    if($fraction>0){
                        $facility->SUMMA= $facility->SUMMA-$fraction+1;
                    }
 
-
-//                   if($fraction>0){
-//                       $facility->SUMMA=$facility->DISCOUNT_SUMM*((100-$facility->DISCOUNT_PROCENT)/100)-$fraction+1;
-//                   }
-
-
                    $visit->SUMMAV=$visit->SUMMAV+$facility->SUMMA;
                    $fraction=($visit->SUMMAV)-floor($visit->SUMMAV);
+
                    if($fraction>0){
                        $visit->SUMMAV= $visit->SUMMAV-$fraction+1;
                    }
+
                    $visit->DOLG=$visit->DOLG+$facility->SUMMA;
                    $fraction=($visit->DOLG)-floor($visit->DOLG);
+
                    if($fraction>0){
                        $visit->DOLG= $visit->DOLG-$fraction+1;
                    }
-//                   if( in_array($facility->ID_PR, $ex)){
-//                       $expense = Expense_catalog::findOne(['ID_PR' => $facility->ID_PR]);
-//                       $expense->KOL=$expense->KOL-$facility->KOL;
-//                       $expense->SUMM=$expense->PRICE*$expense->KOL;
-//                       $expense->save();
-//                   }
+
                    $price=Price::findOne(['ID_PR'=>$facility->ID_PR]);
                    if($price->IsCount==1){
                        $price->KOL-=$facility->KOL;
@@ -1373,15 +1174,13 @@ public function actionCatalog(){
 
                    $facility->save();
                    $visit->save();
-
-
                }
            }
-
        }
 
         return $this->redirect('index.php?r=client/facility&ID_VISIT='.$ID_VISIT);
     }
+
 
     public function actionDocagree(){
         Yii::setAlias('@reports', Yii::$app->basePath . '/reports');
@@ -1390,7 +1189,6 @@ public function actionCatalog(){
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
         $poroda=Poroda::findOne(['ID_POR'=>$pacient->ID_POR]);
-
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres=$client->STREET.' '.$client->HOUSE.'-'.$client->FLAT;
         $document=new PhpWord();
@@ -1398,9 +1196,7 @@ public function actionCatalog(){
         $document->setDefaultFontSize(14);
         $fontStyle = array( 'size'=>11, 'spaceAfter'=>0);
         $document->addFontStyle('myTextStyle', $fontStyle); //myTextStyle - это имя стиля
-
-
-
+        $docImage = BrandImagesForm::findOne(['imageType' => 2]);
         $section = $document->addSection();
 
         $vizitkaStyle=[
@@ -1410,8 +1206,7 @@ public function actionCatalog(){
         ];
 
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        // $section->addImage('D:\OSPanel\OSPanel\domains\VetCMS\web\images\vizitka.jpg', array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
-        $section->addImage(\Yii::getAlias('@webroot')."/images/vizitka.jpg", $vizitkaStyle);
+        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
         $section->addTextBreak(1);
         $section->addText('СОГЛАСИЕ НА ТЕРАПЕВТИЧЕСКИЕ И ХИРУРГИЧЕСКИЕ МАНИПУЛЯЦИИ', ['bold'=>true ], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
         $section->addTextBreak();
@@ -1456,7 +1251,6 @@ public function actionCatalog(){
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
-
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres=$client->STREET.' '.$client->HOUSE.'-'.$client->FLAT;
         $document=new PhpWord();
@@ -1464,12 +1258,7 @@ public function actionCatalog(){
         $document->setDefaultFontSize(14);
         $fontStyle = array( 'size'=>12, 'spaceAfter'=>0, 'bold'=>true);
         $document->addFontStyle('myTextStyle', $fontStyle); //myTextStyle - это имя стиля
-
-
-
         $section = $document->addSection();
-
-
 
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
         $section->addText('Договор возмездного оказания ветеринарных услуг №_____________', 'myTextStyle', [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
@@ -1503,14 +1292,12 @@ public function actionCatalog(){
         $section->addText('Адрес: Пермский край, г. Чайковский, ул. Кабалевского, 24 ',[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('ИНН:_____________________                   				_____________',[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
-
         $filename='/_Договор возмездного оказания'.'.docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@reports').$filename);
-
         $path = \Yii::getAlias('@reports');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
@@ -1519,11 +1306,9 @@ public function actionCatalog(){
     }
 
     function number2string($number) {
-
         // обозначаем словарь в виде статической переменной функции, чтобы
         // при повторном использовании функции его не определять заново
         static $dic = array(
-
             // словарь необходимых чисел
             array(
                 -2	=> 'две',
@@ -1641,17 +1426,19 @@ public function actionCatalog(){
         // преобразуем переменную в текст и возвращаем из функции, ура!
         return join(' ', $string);
     }
+
+
     function toFixed($number, $fix = 2) {
         $arr = explode('.', $number);
         return isset($arr[1]) ? floatval($arr[0] . "." . substr($arr[1], 0, $fix)) : $number;
     }
+
 
     public function actionDocact(){
         Yii::setAlias('@reports', Yii::$app->basePath . '/reports');
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
-
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres= 'г. ' .$client->CITY . ', ул. ' . $client->STREET.', д. '.$client->HOUSE.', кв '.$client->FLAT;
 
@@ -1660,9 +1447,6 @@ public function actionCatalog(){
         $document->setDefaultFontSize(12);
         $titleStyle = array( 'size'=>14, 'bold'=>true);
         $textStyle = array( 'size'=>12, 'bold'=>false);
-        //$document->addFontStyle('myTitleStyle', $fontStyle); //myTitleStyle стиль заголовка
-
-
 
         $section = $document->addSection();
         $document->addParagraphStyle('p2Style', array('textAlignment'=>'baseline', 'spaceAfter'=>0));
@@ -1705,6 +1489,7 @@ public function actionCatalog(){
         $lastPacientId = 0;
         $counter = 1;
         $totalSumm = 0;
+
         foreach ($facilities as $facility) {
             $table->addRow();
 
@@ -1730,7 +1515,6 @@ public function actionCatalog(){
         $section->addText('     Всего оказано  услуг на сумму: ' . $totalSumm . ' ('. $this->number2string($this->toFixed($totalSumm)) .') руб. '. ($totalSumm - floor($totalSumm)).' коп., без  НДС. Вышеперечисленные работы (услуги) выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг претензий не имеет.'
             , $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceBefore'=> 500, 'spaceAfter'=> 500]);
 
-
         $styleTable = array('borderSize' => false, 'borderColor' => '999999');
 
         $cellHCentered = array('align' => 'both', 'spaceAfter'=>100);
@@ -1742,36 +1526,27 @@ public function actionCatalog(){
         $table->addCell(6000, $cellVCentered)->addText('Исполнитель: ИП Зайцева Н.В.', array('bold' => true), $cellHCentered);
         $table->addCell(6000, $cellVCentered)->addText('Заказчик: ' . $fio, array('bold' => true), $cellHCentered);
 
-
-
         $table->addRow();
         $cell=$table->addCell(2000, $cellVCentered);
-
         $cell->addText('Подпись: ____________/____________ ', null, $cellHCentered);
         $cell->addText('М.П. ', null, $cellHCentered);
-
         $cell=$table->addCell(2000, $cellVCentered);
-
         $cell->addText('Подпись: ____________/____________', null, $cellHCentered);
         $cell->addText('М.П. ', null, $cellHCentered);
-
-
-
-
 
         $filename='/_Акт выполненных работ'.'.docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@reports').$filename);
-
         $path = \Yii::getAlias('@reports');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
             throw new \Exception('Файл не найден');
         }
     }
+
 
     public function actionPrintblood(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
@@ -1781,13 +1556,11 @@ public function actionCatalog(){
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
         $spreadsheet=new Spreadsheet();
         $sheet=$spreadsheet->getActiveSheet();
-
         $sheet->setCellValue('A1', 'ЗооДоктор');
         $sheet->mergeCells('A2:D2');
         $sheet->mergeCells('A3:D3');
         $sheet->setCellValue('A2', 'Аналаиз крови - '.$vid->NAMEVID .' '.$pacient->KLICHKA.' от '.date('d.m.Y', strtotime($analyz->DATE)));
         $sheet->setCellValue('A3', 'Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH);
-
 
         $titles=[
             [
@@ -1896,8 +1669,6 @@ public function actionCatalog(){
         $sheet->getStyle('A5:D23')
             ->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
-
-
         $filename='/_Анализ крови '.$pacient->KLICHKA.' от '.date('d.m.Y',strtotime($analyz->DATE)).'.xlsx';
         $writer = new Xlsx($spreadsheet);
         $writer->save(Yii::getAlias('@analysis').$filename);
@@ -1911,6 +1682,7 @@ public function actionCatalog(){
         }
     }
 
+
     public function actionPrintbiohim(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
         $analyz=Biohim::findOne(['ID_BIOHIM'=>$_GET['ID_BIOHIM']]);
@@ -1919,13 +1691,11 @@ public function actionCatalog(){
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
         $spreadsheet=new Spreadsheet();
         $sheet=$spreadsheet->getActiveSheet();
-
         $sheet->setCellValue('A1', 'ЗооДоктор');
         $sheet->mergeCells('A2:D2');
         $sheet->mergeCells('A3:D3');
         $sheet->setCellValue('A2', 'Биохимический анализ крови - '.$vid->NAMEVID.' '.$pacient->KLICHKA.' от '.date('d.m.Y', strtotime($analyz->DATE)));
         $sheet->setCellValue('A3', 'Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH);
-
 
         $titles=[
             [
@@ -1945,6 +1715,7 @@ public function actionCatalog(){
                 'cell'=>'D',
             ]
         ];
+
         for ($j = 0; $j < count($titles); $j++) {
 
             $string = $titles[$j]['name'];
@@ -1971,7 +1742,6 @@ public function actionCatalog(){
         $sheet->setCellValue('A22','Холестерин');
         $sheet->setCellValue('A23','Альбумин');
 
-
         $sheet->getColumnDimension('A')->setWidth(30);
         $sheet->getColumnDimension('B')->setWidth(17);
         $sheet->getColumnDimension('C')->setWidth(17);
@@ -1996,8 +1766,6 @@ public function actionCatalog(){
         $sheet->setCellValue('B22','1,8-4,2');
         $sheet->setCellValue('B23','25-37');
 
-
-
         $sheet->setCellValue('C6','59-76');
         $sheet->setCellValue('C7','0,9-10,6');
         $sheet->setCellValue('C8','0,3');
@@ -2016,7 +1784,6 @@ public function actionCatalog(){
         $sheet->setCellValue('C21','0,97-1,45');
         $sheet->setCellValue('C22','2,6-7,0');
         $sheet->setCellValue('C23','22-39');
-
 
         $sheet->setCellValue('D6',$analyz->BELOK);
         $sheet->setCellValue('D7',$analyz->BILIRUB_OBSH);
@@ -2037,8 +1804,6 @@ public function actionCatalog(){
         $sheet->setCellValue('D22',$analyz->HOL);
         $sheet->setCellValue('D23',$analyz->ALB);
 
-
-
         $sheet->mergeCells('C25:D25');
         $sheet->setCellValue('C25', 'Подпись:______________');
         $sheet->getStyle('C25')->getAlignment()->setHorizontal('right');
@@ -2050,20 +1815,19 @@ public function actionCatalog(){
         $sheet->getStyle('A5:D23')
             ->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
-
-
         $filename='/_Биохимический анализ крови '.$pacient->KLICHKA.' от '.date('d.m.Y',strtotime($analyz->DATE)).'.xlsx';
         $writer = new Xlsx($spreadsheet);
         $writer->save(Yii::getAlias('@analysis').$filename);
         $path = \Yii::getAlias('@analysis');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
             throw new \Exception('Файл не найден');
         }
     }
+
 
     public function actionPrintmocha(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
@@ -2073,13 +1837,11 @@ public function actionCatalog(){
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
         $spreadsheet=new Spreadsheet();
         $sheet=$spreadsheet->getActiveSheet();
-
         $sheet->setCellValue('A1', 'ЗооДоктор');
         $sheet->mergeCells('A2:D2');
         $sheet->mergeCells('A3:D3');
         $sheet->setCellValue('A2', 'Общий анализ мочи - '.$vid->NAMEVID.' '.$pacient->KLICHKA.' от '.date('d.m.Y', strtotime($analyz->DATE)));
         $sheet->setCellValue('A3', 'Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH);
-
 
         $titles=[
             [
@@ -2099,6 +1861,7 @@ public function actionCatalog(){
                 'cell'=>'D',
             ]
         ];
+
         for ($j = 0; $j < count($titles); $j++) {
 
             $string = $titles[$j]['name'];
@@ -2138,13 +1901,10 @@ public function actionCatalog(){
         $sheet->setCellValue('C12','0-5');
         $sheet->setCellValue('C13','0-3');
 
-
         $sheet->getColumnDimension('A')->setWidth(30);
         $sheet->getColumnDimension('B')->setWidth(17);
         $sheet->getColumnDimension('C')->setWidth(17);
         $sheet->getColumnDimension('D')->setWidth(17);
-
-
 
         $sheet->setCellValue('D6',$analyz->KOL);
         $sheet->setCellValue('D7',$analyz->BELOK);
@@ -2165,7 +1925,6 @@ public function actionCatalog(){
         $sheet->setCellValue('D22',$analyz->SULT);
         $sheet->setCellValue('D23',$analyz->BAKT);
 
-
         $sheet->mergeCells('C25:D25');
         $sheet->setCellValue('C25', 'Подпись:______________');
         $sheet->getStyle('C25')->getAlignment()->setHorizontal('right');
@@ -2177,14 +1936,12 @@ public function actionCatalog(){
         $sheet->getStyle('A5:D23')
             ->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
-
-
         $filename='/_Общий анализ мочи '.$pacient->KLICHKA.' от '.date('d.m.Y',strtotime($analyz->DATE)).'.xlsx';
         $writer = new Xlsx($spreadsheet);
         $writer->save(Yii::getAlias('@analysis').$filename);
         $path = \Yii::getAlias('@analysis');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
@@ -2192,23 +1949,22 @@ public function actionCatalog(){
         }
     }
 
-    public function actionExpense_catalog(){
 
+    public function actionExpense_catalog(){
         $expense_catalog = new ActiveDataProvider([
             'query' => Expense_catalog::find(),
             'pagination' => false,
 
 
         ]);
+
         return $this->render('expense_catalog', compact('expense_catalog'));
     }
 
-    public function actionExpenseadd(){
 
+    public function actionExpenseadd(){
         if ($_GET['ID_EX']!=NULL){
             $model=Expense_catalogForm::findOne(['ID_EX'=>$_GET['ID_EX']]);
-
-
         }else{
             $model=new Expense_catalogForm();
             $model->DATE=date('d.m.Y');
@@ -2219,34 +1975,31 @@ public function actionCatalog(){
             $model->DATE=date('Y-m-d', strtotime($model->DATE));
 
             if ($model->save()){
-
                 return $this->redirect("index.php?r=client/expense_prihod");
             }
         }
+
         return $this->render('expenseadd', compact('model'));
     }
 
-    public function actionExpense_prihod(){
 
+    public function actionExpense_prihod(){
         $expense_prihod = new ActiveDataProvider([
             'query' => Expense_prihod::find(),
             'pagination' => false,
 
 
         ]);
+
         return $this->render('expense_prihod', compact('expense_prihod'));
     }
 
     public function actionExpense_prihodadd(){
-
         if ($_GET['ID_EXPR']!=NULL){
             $model=Expense_prihodForm::findOne(['ID_EXPR'=>$_GET['ID_EXPR']]);
-
-
         }else{
             $model=new Expense_prihodForm();
             $model->DATE=date('d.m.Y');
-
         }
 
         if ( $model->load(Yii::$app->request->post()) ){
@@ -2256,10 +2009,10 @@ public function actionCatalog(){
             $model->DATE=date('Y-m-d', strtotime($model->DATE));
 
             if ($model->save()){
-
                 return $this->redirect("index.php?r=client%2Fexpense_prihod");
             }
         }
+
         return $this->render('expense_prihodadd', compact('model'));
     }
 
@@ -2270,9 +2023,7 @@ public function actionCatalog(){
         $pacient=Pacient::findOne(['ID_PAC'=>$uzi->ID_PAC]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
-
-
-
+        $docImage = BrandImagesForm::findOne(['imageType' => 2]);
 
         $document=new PhpWord();
         $document->setDefaultFontName('Times New Roman');
@@ -2281,38 +2032,28 @@ public function actionCatalog(){
         $document->addFontStyle('myTextStyle', $fontStyle); //myTextStyle - это имя стиля
 
         $section = $document->addSection();
-
-
-
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        // addImage(\Yii::getAlias('@webroot')."/images/vizitka.jpg", $vizitkaStyle);
-        $section->addImage(\Yii::getAlias('@webroot')."/images/vizitka.jpg", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
-
+        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
         $section->addText('УЗИ', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
-
-
         $section->addText(date('d.m.Y', strtotime($uzi->DATE)), ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Пациент - '.$vid->NAMEVID.' '.$pacient->KLICHKA, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Заключение', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER  ]);
         $uzi->OP = str_replace("\n", "<w:br/>", $uzi->OP);
-
         $section->addText($uzi->OP, [], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::LEFT  ]);
-
         $filename='/Узи '.$pacient->KLICHKA.' от '.date('d.m.Y', strtotime($uzi->DATE)).'.docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@analysis').$filename);
-
         $path = \Yii::getAlias('@analysis');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
             throw new \Exception('Файл не найден');
         }
-
     }
+
 
     public function actionPrintother(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
@@ -2320,9 +2061,7 @@ public function actionCatalog(){
         $pacient=Pacient::findOne(['ID_PAC'=>$other->ID_PAC]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
-
-
-
+        $docImage = BrandImagesForm::findOne(['imageType' => 2]);
 
         $document=new PhpWord();
         $document->setDefaultFontName('Times New Roman');
@@ -2331,28 +2070,21 @@ public function actionCatalog(){
         $document->addFontStyle('myTextStyle', $fontStyle); //myTextStyle - это имя стиля
 
         $section = $document->addSection();
-
-
-
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        $section->addImage(\Yii::getAlias('@webroot')."/images/vizitka.jpg", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
-
+        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
         $section->addText('ИССЛЕДОВАНИЕ', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText(date('d.m.Y', strtotime($other->DATE)), ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Пациент - '.$vid->NAMEVID.' '.$pacient->KLICHKA, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Заключение', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER  ]);
         $other->OP = str_replace("\n", "<w:br/>", $other->OP);
-
         $section->addText($other->OP, [], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::LEFT  ]);
-
         $filename='/Исследование  '.$pacient->KLICHKA.' от '.date('d.m.Y', strtotime($other->DATE)).'.docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@analysis').$filename);
-
         $path = \Yii::getAlias('@analysis');
-
         $file = $path.$filename;
+
         if (file_exists($file)) {
             \Yii::$app->response->sendFile($file);
         }else {
@@ -2363,18 +2095,19 @@ public function actionCatalog(){
 
     public function actionDocuslugi(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
-
         $pacient=Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
         $poroda=Poroda::findOne(['ID_POR'=>$pacient->ID_POR]);
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres=$client->STREET.' '.$client->HOUSE.'-'.$client->FLAT;
+
         if($pacient->VOZR==''){
             $vozr='________';
         }else{
             $vozr=$pacient->VOZR;
         }
+
         if($pos= strripos($pacient->KLICHKA, '(')){
             $str=strpos($pacient->KLICHKA, "(");
             $name=substr($pacient->KLICHKA, 0, $str);
@@ -2382,28 +2115,22 @@ public function actionCatalog(){
             $name=$pacient->KLICHKA;
         }
 
+        $docImage = BrandImagesForm::findOne(['imageType' => 2]);
 
-
-
-//        $this->debug(\Yii::getAlias('@webroot'));
         $vizitkaStyle=[
             'width'=>150,
             'height'=>75,
             'wrappingStyle'=>'inline'
         ];
+
         $document=new PhpWord();
         $document->setDefaultFontName('Calibri');
         $document->setDefaultFontSize(8);
         $titleSection=$document->addSection(['marginTop' => '400', 'marginLeft'=>'600', 'marginRight'=>'600', 'marginBottom'=>'400', 'breakType'=>'continuous']);
-
-
-
-        $titleSection->addImage(\Yii::getAlias('@webroot')."/images/vizitka.jpg", $vizitkaStyle);
+        $titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
         $footer = $titleSection->addFooter();
         $textRun = $footer->addTextRun(array('alignment' => Jc::END));
         $textRun->addField('PAGE', '&R&F');
-
-
 
         $titleSection->addText('Договор об оказании ветеринарных услуг №___________________________'.date('Y').' год'
             , ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER  ]);
@@ -2416,15 +2143,7 @@ public function actionCatalog(){
             'о нижеследующем:',
             [],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH , 'spaceAfter'=>100]);
 
-
-
-
         $section = $document->addSection(['marginTop' => '300', 'marginLeft'=>'500', 'marginRight'=>'300', 'marginBottom'=>'400', 'breakType'=>'continuous']);
-
-
-
-
-
         $section->addText('1. Предмет договора:',['bold'=>true],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH , 'spaceAfter'=>0]);
         $section->addText('1.1. По настоящему Договору Клиника принимает на себя обязательства оказать Пациенту по поручению Владельца Пациента ветеринарные услуги на платной основе, отвечающие требованиям, установленным на территории Российской Федерации, а Владелец Пациента обязуется оплатить ветеринарные услуги, оказанные Пациенту в соответствии с разделом 5 Договора.'
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
@@ -2432,7 +2151,6 @@ public function actionCatalog(){
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
         $section->addText('1.3. Владелец Пациента при подписании настоящего Договора ознакомлен с Правилами обслуживания клиентов.'
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
-
 
         $section->addText('2. Условия выполнения работ:',['bold'=>true],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH , 'spaceAfter'=>0  ]);
         $section->addText('2.1. Клиника оказывает ветеринарные услуги Владельцу Пациента после подписания Договора.'
@@ -2526,8 +2244,6 @@ public function actionCatalog(){
         $section->addText("3.4.6. Осуществлять процедуры в соответствии с апробированными и признанными методиками лечения, а также новейшими достижениями в области ветеринарии, доступными для Клиники и в соответствии с условиями настоящего договора."
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
 
-
-
         $section->addText('4. Гарантии и ответственность',['bold'=>true],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0   ]);
         $section->addText("4.1. Клиника несёт ответственность перед Владельцем Пациента в соответствии с действующим законодательством Российской Федерации только за умышленные действия или бездействие работников, но не более чем в размере реального ущерба, причиненного Пациенту."
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
@@ -2571,13 +2287,8 @@ public function actionCatalog(){
         $section->addText("7.5. Я СОГЛАСЕН/НЕ СОГЛАСЕН (нужное подчеркнуть) на фото- и видеосъемку меня и моего животного, а также на публикацию материалов содержащих информацию о симптомах, этапах выздоровления и результатах лечения на информационных порталах Исполнителя (сайт, соцсети) с целью просвещения владельцев и профилактики заболеваний.Подпись________________/_______________/"
             ,[],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>0  ]);
 
-
         $section->addText('8. Адреса и реквизиты сторон',['bold'=>true],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter'=>50   ]);
-
-
-
         $styleTable = array('borderSize' => false, 'borderColor' => '999999');
-
         $cellHCentered = array('align' => 'both', 'spaceAfter'=>100);
         $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
 
@@ -2586,14 +2297,14 @@ public function actionCatalog(){
         $table->addRow(null, array('tblHeader' => true));
         $table->addCell(6000, $cellVCentered)->addText('Владелец Пациента:', array('bold' => true), $cellHCentered);
         $table->addCell(6000, $cellVCentered)->addText('Клиника (Исполнитель): ', array('bold' => true), $cellHCentered);
-
-
         $table->addRow();
+
         if($client->PHONES==''){
             $phone='________________________';
         }else{
             $phone=$client->PHONES;
         }
+
         $cell=$table->addCell(2000, $cellVCentered);
         $cell->addText('ФИО: '.$fio, null, $cellHCentered);
         $cell->addText('Документ: _________________________', null, $cellHCentered);
@@ -2614,8 +2325,6 @@ public function actionCatalog(){
         $cell->addText('Подпись: ________________________ ', null, $cellHCentered);
         $cell->addText('м.п. ', null, $cellHCentered);
 
-
-
         $filename='/_Договор об оказании вет. услуг '.$pacient->KLICHKA.' ('.$fio.').docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@analysis').$filename);
@@ -2628,6 +2337,8 @@ public function actionCatalog(){
             throw new \Exception('Файл не найден');
         }
     }
+
+
     public function actionOplatadelete(){
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $oplata=Oplata::findOne(['ID_OPL'=>$_GET['ID_OPL']]);
@@ -2636,19 +2347,20 @@ public function actionCatalog(){
         $visit->save();
         $oplata->delete();
         $this->redirect('index.php?r=client/visit&ID_VISIT='.$ID_VISIT);
-
     }
+
+
     public function actionPr_facility(){
         $facilityId=[];
-        foreach ($_GET as $key => $item) {
 
+        foreach ($_GET as $key => $item) {
             if($item==1&&$key!='doctor'){
                 array_push($facilityId, $key);
             }
-
-
         }
+
         $totalSumm=0;
+
         foreach ($facilityId as $item){
             $oldFac=Facility::findOne(['ID_FAC'=>$item]);
             $newFac=new Facility();
@@ -2660,49 +2372,53 @@ public function actionCatalog(){
             $newFac->KOL=$oldFac->KOL;
             $newFac->SUMMA=$oldFac->SUMMA;
             $fraction=($newFac->SUMMA)-floor($newFac->SUMMA);
+
             if($fraction>0){
                 $newFac->SUMMA= $newFac->SUMMA-$fraction+1;
             }
+
             $newFac->DATA=date('Y-m-d');
             $newFac->ID_VISIT=$_GET['ID_VISIT'];
             $totalSumm=$totalSumm+$newFac->SUMMA;
             $newFac->save();
-
-
-
-
         }
+
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $visit->SUMMAV=$visit->SUMMAV+$totalSumm;
         $visit->DOLG=$visit->DOLG+$totalSumm;
         $visit->save();
+
         $this->redirect('index.php?r=client/visit&ID_VISIT='.$_GET['ID_VISIT']);
     }
+
+
     public function actionPr_visit_facility(){
         $doc=[];
         $doctors=Doctor::find()->where(['STATUS_R'=>'1'])->all();
         $visit=Vizit::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
         $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
+
         for($i=0;$i<count($doctors); $i++)
         {
             $doc[$doctors[$i]->ID_DOC]=$doctors[$i]->NAME;
         }
+
         $prVisit=Vizit::find()->where(['ID_PAC'=>$pacient->ID_PAC])->andwhere(['<', 'ID_VISIT', $visit->ID_VISIT])->orderBy(['ID_VISIT'=>SORT_DESC])->limit(1)->all();
 
         $prFacilityProvider = new ActiveDataProvider([
             'query' => Facility::find()->where(['ID_VISIT'=>$prVisit[0]->ID_VISIT]),
             'pagination' => false,
-
-
         ]);
 
         return $this->render('pr_visit_facility', compact('prFacilityProvider', 'doc'));
     }
-    public function actionWriteoff(){
 
+
+    public function actionWriteoff(){
         if($_GET['pass']!='asdfg'){
             $this->redirect("index.php?r=client");
         }
+
         $writeOffProvider = new ActiveDataProvider([
             'query' => WriteOffForm::find(),
             'pagination' => [
@@ -2710,34 +2426,34 @@ public function actionCatalog(){
 
             ],
         ]);
+
         if(!Yii::$app->request->get('page')){
             $writeOffProvider->pagination->page = ceil($writeOffProvider->getTotalCount() / $writeOffProvider->pagination->pageSize) - 1;
         }
 
-
         return $this->render('writeoff', compact('writeOffProvider'));
     }
-    public function actionWriteoff_pas(){
 
+
+    public function actionWriteoff_pas(){
         return $this->render('writeoff_pas');
     }
+
 
     public function actionAddwriteoff(){
         if ($_GET['Writeoff_ID']!=NULL){
             $model=WriteOffForm::findOne(['Writeoff_ID'=>$_GET['Writeoff_ID']]);
-
         }else{
             $model=new WriteOffForm();
             $model->DATE=date("d.m.Y");
-
-
         }
+
         $pr=Prihod_tovara::find()->joinWith('tovar')->orderBy([
             'NAME'=>SORT_ASC,
             'KOL'=>SORT_DESC,
         ])->all();
-
         $prihod=[];
+
         foreach ($pr as $item){
             $prihod[$item->ID_PRIHOD]=$item->tovar->NAME.' (остаток - '.$item->KOL.'; цена продажи - '.$item->SELL_PRICE.' руб.)';
             if($item->PRIM!=''){
@@ -2745,35 +2461,39 @@ public function actionCatalog(){
             }
         }
 
-
         if ( $model->load(Yii::$app->request->post()) ){
-
             $model->DATE=date('Y-m-d', strtotime($model->DATE));
             $tovar=Prihod_tovara::findOne(['ID_PRIHOD'=>$model->ID_PRIHOD]);
             $tovar->KOL=$tovar->KOL-$model->KOL;
-
             $model->SUMM=($model->KOL*$tovar->SELL_PRICE);
             $fraction=($model->SUMM)-floor($model->SUMM);
+
             if($fraction>0){
                 $model->SUMM= $model->SUMM-$fraction+1;
             }
+
             $tovar->save();
 
             if ($model->save()){
-
                 return $this->redirect("index.php?r=client/writeoff&pass=asdfg");
             }
         }
+
         return $this->render('addwriteoff', compact('model', 'prihod'));
     }
+
+
     public function  actionWriteoffdelete(){
         $model=Write_off::findOne(['Writeoff_ID'=>$_GET['Writeoff_ID']]);
         $prihod=Prihod_tovara::findOne(['ID_PRIHOD'=>$model->ID_PRIHOD]);
         $prihod->KOL+=$model->KOL;
         $prihod->save();
         $model->delete();
+
         return $this->redirect("index.php?r=client/writeoff&pass=asdfg");
     }
+
+
     public function actionFacility_correct(){
         $facility = FacilityForm::findOne(['ID_FAC'=>$_GET['ID_FAC']]);
         $facility->DATA=date("d.m.Y", strtotime($facility->DATA));
@@ -2782,14 +2502,14 @@ public function actionCatalog(){
             $facility->DATA=date("Y-m-d", strtotime($facility->DATA));
             $ID_VISIT=$facility->ID_VISIT;
             $ID_PAC=$facility->ID_PAC;
-            if ($facility->save()){
 
+            if ($facility->save()){
                 return $this->redirect("index.php?r=client/visit&ID_VISIT=".$ID_VISIT.'&ID_PAC='.$ID_PAC);
             }
         }
+
+
         return $this->render('facility_correct', compact('facility'));
     }
-
-
 }
 
