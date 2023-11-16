@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\models\ClinicForm;
+use MercuryAPI\MercuryWrapper;
 
 
 class CashboxController extends AppController
