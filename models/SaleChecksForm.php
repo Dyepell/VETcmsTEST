@@ -16,6 +16,7 @@ class SaleChecksForm extends ActiveRecord
         return [
             'id' => 'ID чека',
             'saleId' => 'ID продажи',
+            'visitId' => 'ID визита',
             'shiftNum' => 'Номер кассовой смены',
             'checkNum' => 'Номер закрытого чека',
             'fiscalDocNum' => 'Номер фискального документа',
@@ -27,7 +28,7 @@ class SaleChecksForm extends ActiveRecord
 
     public function rules() {
         return [
-            [['id', 'saleId', 'shiftNum', 'checkNum', 'fiscalDocNum', 'fiscalSign', 'date'], 'safe']
+            [['id', 'saleId', 'visitId', 'shiftNum', 'checkNum', 'fiscalDocNum', 'fiscalSign', 'date'], 'safe']
         ];
     }
 }

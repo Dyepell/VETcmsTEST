@@ -17,6 +17,7 @@ use app\models\Expense_prihod;
 use app\models\Expense_prihodForm;
 use app\models\Facility;
 use app\models\FacilityForm;
+use app\models\GoodBarcodesForm;
 use app\models\Istbol;
 use app\models\IstbolForm;
 use app\models\KattovForm;
@@ -345,6 +346,40 @@ class ClientController extends AppController
                 if ($visit->IsDolg) {
                     $oplata->IsDolg=1;
                 }
+
+                //MyUtility::Dump($oplata);
+                if ($oplata->VID_OPL == 0){
+                    $clinic = ClinicForm::findOne(['id'=>1]);
+                    $cashboxResponse['code'] = 'none';
+                    //$goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
+                    $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+                        $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
+                    $qty = 10000;
+                    $price = $oplata->SUMM * 100;
+                    $goods = [
+                        0 => [
+                            'productName' => "Ветеринарные услуги",
+                            'qty' => "$qty",
+                            'price' => "$price",
+                            'type' => 4
+                        ]];
+                    $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
+
+                    if ($cashboxResponse['code'] == 200) {
+                        $checkModel = new SaleChecksForm();
+                        $checkModel->visitId = $visit->ID_VISIT;
+                        $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
+                        $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
+                        $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
+                        $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
+                        $checkModel->date = date("Y-m-d H:i:s");
+                        $checkModel->save();
+                    } else {
+                        $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
+                        file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
+                    }
+                }
+
                 $oplata->save();
                 $visit->DOLG=$visit->DOLG-$visit->SUMMAO;
                 $visit->SUMMAO='';
@@ -832,6 +867,13 @@ class ClientController extends AppController
     public function actionTovar(){
         if ($_GET['ID_TOV']!=NULL){
             $model=KattovForm::findOne(['ID_TOV'=>$_GET['ID_TOV']]);
+            $barcodesModel = new ActiveDataProvider([
+                'query' => GoodBarcodesForm::find()->where(['goodId' => $model->ID_TOV]),
+                'pagination' => [
+                    'pageSize' => 10,
+
+                ],
+            ]);
         }else{
             $model=new KattovForm();
         }
@@ -843,7 +885,26 @@ class ClientController extends AppController
         }
 
 
-        return $this->render('tovar', compact('model'));
+        return $this->render('tovar', compact('model', 'barcodesModel'));
+    }
+
+
+    public function actionGoodbarcode() {
+        $goodBarcode = new GoodBarcodesForm();
+//        $brandImagesTypes = BrandImagesTypesForm::find()->select(['typeName'])->column();
+//
+//        if (!$_GET['id']) {
+//            $brandImage = new BrandImagesForm();
+//        } else {
+//            $brandImage = BrandImagesForm::findOne(['id'=>$_GET['id']]);
+//        }
+//
+        if ($goodBarcode->load(Yii::$app->request->post())) {
+            if ($goodBarcode->save()) {
+                $this->redirect("index.php?r=client/catalog");
+            }
+        }
+        return $this->render('goodbarcode', compact('goodBarcode'));
     }
 
     public function actionSale(){
@@ -872,9 +933,6 @@ class ClientController extends AppController
 
         }
 
-        function dump($arr){
-            echo '<pre>'.print_r($arr, true).'</pre>';
-        }
 
         $queryResult=Prihod_tovara::find()->joinWith('tovar')->orderBy([
             'NAME'=>SORT_ASC,
@@ -939,7 +997,7 @@ class ClientController extends AppController
                     'productName' => "$goodModel->NAME",
                     'qty' => "$qty",
                     'price' => "$price",
-                    'type' => 4
+                    'type' => 1
                 ]];
             $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
 
