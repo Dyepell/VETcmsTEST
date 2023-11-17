@@ -47,7 +47,8 @@ class CashboxController extends AppController
                     0 => [
                         'productName' => 'Ветеринарные услуги',
                         'qty' => '10000',
-                        'price' => '100'
+                        'price' => '100',
+                        'type' => 4
                     ]];
                 $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
             }
