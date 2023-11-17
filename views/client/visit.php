@@ -145,7 +145,6 @@ $('#visitForm').on('beforeSubmit', function()
         <div class="col" style="margin-left: 20px;">
            <?php  if ($_GET['ID_VISIT']!=null)
            {echo "<span style=\"font-size: 150%;\">Список услуг</span>";}?>
-            <a href="#" id = "createCheck" class="btn btn-success" style="float: right">Сформировать чек</a>
             <?php
             if ($_GET['ID_VISIT']!=null){echo GridView::widget([
                 'dataProvider'=>$FacilityProvider,

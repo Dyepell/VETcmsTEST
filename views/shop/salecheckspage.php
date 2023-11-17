@@ -33,6 +33,7 @@ use yii\helpers\Html;
 //                ],
                 'id',
                 'saleId',
+                'visitId',
                 'shiftNum',
                 'checkNum',
                 'fiscalDocNum',
