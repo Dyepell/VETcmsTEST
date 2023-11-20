@@ -117,7 +117,7 @@ class MercuryWrapper
 
         $temp = json_decode(file_get_contents(__DIR__ . '/../../widgets/MercuryWrapper/SessionKey.json'), true);
 
-        if (is_null($temp['startSessionTime']) OR ((time() - $temp['startSessionTime']) > 20)) {
+        if (is_null($temp['startSessionTime']) OR ((time() - $temp['startSessionTime']) > 0)) {
             $temp['startSessionTime'] = time();
             $result = $this->CreateRequest('POST', ["command" => "OpenSession"]);
             $this->sessionKey = $result['data']['sessionKey'];

@@ -390,6 +390,7 @@ class ClientController extends AppController
                             'price' => "$price",
                             'type' => 4
                         ]];
+                    $mercuryWrapper = $mercuryWrapper->OpenSession();
                     $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
 
                     if ($cashboxResponse['code'] == 200) {
@@ -1036,7 +1037,7 @@ class ClientController extends AppController
                     'price' => "$price",
                     'type' => 1
                 ]];
-
+            $mercuryWrapper->OpenSession();
             $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
 
             if ($cashboxResponse['code'] == 200) {
