@@ -40,11 +40,4 @@ class Prihod_tovaraForm extends ActiveRecord
         ];
     }
 
-
-    public function ImportSbis() {
-
-
-        return true;
-    }
-
 }

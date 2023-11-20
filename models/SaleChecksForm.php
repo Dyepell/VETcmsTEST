@@ -26,6 +26,10 @@ class SaleChecksForm extends ActiveRecord
     }
 
 
+    public function getTovar(){
+        return $this->hasOne(Kattov::className(), ['ID_TOV' => 'ID_TOV']);
+    }
+
     public function rules() {
         return [
             [['id', 'saleId', 'visitId', 'shiftNum', 'checkNum', 'fiscalDocNum', 'fiscalSign', 'date'], 'safe']

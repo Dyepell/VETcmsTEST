@@ -29,6 +29,7 @@ use app\models\PriceForm;
 use app\models\Sale;
 use app\models\SaleChecksForm;
 use app\models\SaleForm;
+use app\models\SaleForm_new;
 use app\models\SearchForm;
 use app\models\SearchModel;
 use app\models\SelectForm;
@@ -316,17 +317,43 @@ class ClientController extends AppController
             $istbolProvider = new ActiveDataProvider([
                 'query' => Istbol::find()->where(['ID_PAC'=>$visit->ID_PAC]),
                 'pagination' => false,
-
-
             ]);
 
-        $visit->DATE=date("d.m.Y", strtotime($visit->DATE));
+            $visit->DATE=date("d.m.Y", strtotime($visit->DATE));
+
+            $goodsSalesProvider = new ActiveDataProvider([
+                'query' => SaleForm::find()->joinWith('good')
+                    ->where(['ID_VISIT' =>$visit->ID_VISIT]),
+                'pagination' => false
+            ]);
+
+            //продажа товара
+            $model=new SaleForm();
+            $model->DATE=date("d.m.Y");
+            $model->SKIDKA=0;
+
+            $queryResult=Prihod_tovara::find()->joinWith('tovar')->orderBy([
+                'NAME'=>SORT_ASC,
+                'KOL'=>SORT_DESC,
+            ])->all();
+
+            foreach ($queryResult as $item){
+                $salesProducts[$item->ID_TOV][name]=$item->tovar->NAME;
+                $salesProducts[$item->ID_TOV][prihods][$item->ID_PRIHOD]=[
+                    'ID_PRIHOD'=>$item->ID_PRIHOD,
+                    'sellPrice'=>$item->SELL_PRICE,
+                    'kol'=>$item->KOL,
+                    'prim'=>$item->PRIM,
+                    'date'=>$item->DATE,
+                ];
+            }
+
+            $doctors=Doctor::find()->where(["STATUS_R"=>1])->all();
+
         }else{
             $visit=new VizitForm();
-
             $visit->ID_PAC=$_GET['ID_PAC'];
             $pac=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
-
             $visit->ID_CL=$pac->ID_CL;
             $visit->DATE=date("d.m.Y");
         }
@@ -397,7 +424,9 @@ class ClientController extends AppController
         }
 
         $this->view->title='Визит: '.$pacient->KLICHKA;
-        return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider', 'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc'));
+        return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider',
+            'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc', 'goodsSalesProvider',
+            'model', 'salesProducts', 'doctors'));
     }
 
 
@@ -928,9 +957,6 @@ class ClientController extends AppController
             $model=SaleForm::findOne(['ID_SALE'=>$_GET['ID_SALE']]);
         }else{
             $model=new SaleForm();
-            $model->DATE=date("d.m.Y");
-            $model->SKIDKA=0;
-
         }
 
 
@@ -956,6 +982,16 @@ class ClientController extends AppController
     }
 
 
+    //оставил тут т.к. view потом будет использоваться в визите, который привязвн к clientController, а не к shopController (использовать renderFile?)
+    public function actionNewsale() {
+        $saleModel = new SaleForm_new();
+        //$doctors = DoctorForm::find()->joinWith('doctors')->orderBy("NAME ASC")->all();
+
+        //старый view
+        return $this->render('Sale_new', compact('saleModel'));
+    }
+
+
     public function actionNew_sale_form(){
         $ID_PRIHOD=$_GET["ID_PRIHOD"];
         $ID_DOC=$_GET["ID_DOC"];
@@ -970,6 +1006,7 @@ class ClientController extends AppController
         $model->VID_OPL=$VID_OPL;
         $model->KOL=$KOL;
         $model->DATE=date('Y-m-d', strtotime($DATE));
+
         $tovar = Prihod_tovara::findOne(['ID_PRIHOD'=>$ID_PRIHOD]);
         $tovar->KOL=$tovar->KOL-$KOL;
         $model->SUMM=($model->KOL*$tovar->SELL_PRICE)*((100-$model->SKIDKA)/100);
@@ -999,6 +1036,7 @@ class ClientController extends AppController
                     'price' => "$price",
                     'type' => 1
                 ]];
+
             $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
 
             if ($cashboxResponse['code'] == 200) {

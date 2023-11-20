@@ -10,6 +10,7 @@ use yii\widgets\ActiveForm; ?>
     <h1>Продажа товара <a href="index.php?r=shop/salecheckspage" class="btn btn-warning">Список чеков</a></h1>
     <div class="col">
         <div class="col"><a href="index.php?r=client/new_add_sale" class="btn btn-success" style="width: 100%; margin-bottom: 10px;">Добавить</a></div>
+        <div class="col"><a href="index.php?r=client/newsale" class="btn btn-info" style="width: 100%; margin-bottom: 10px;">Оформление продажи</a></div>
         <div class="col">
 
             <div >

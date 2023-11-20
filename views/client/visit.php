@@ -1,13 +1,15 @@
 <?php
 
+use app\models\Doctor;
+use app\models\Prihod_tovara;
+use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
-function dump($arr){
-    echo '<pre>'.print_r($arr, true).'</pre>';
-}
+use app\models\SaleForm;
+
 ?>
 
 
@@ -34,6 +36,26 @@ $('#visitForm').on('beforeSubmit', function()
 //      }, 3000);
 //  });
 </script>
+
+<div class="modal fade" id="sales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Добавление продажи к визиту</h4>
+            </div>
+            <div class="modal-body clinic-col">
+                <?echo Yii::$app->controller->renderPartial('new_add_sale', compact('model', 'salesProducts', 'doctors')); ?>
+            </div>
+            <div class="modal-footer">
+                <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal fade" id="istbol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -243,9 +265,8 @@ $('#visitForm').on('beforeSubmit', function()
         <?php endif;?>
     </div>
 
-
-
     </div>
+
 
     <div class="col-md-5" style="margin-left: 20px;">
         <?php if($_GET['ID_VISIT']!=NULL):?>
@@ -253,24 +274,45 @@ $('#visitForm').on('beforeSubmit', function()
             Истории болезни
         </button>
         <a href="index.php?r=client/analysis&ID_PAC=<?=$visit->ID_PAC?>" class="btn btn-primary">Исследования</a>
-        <div class="row"></div>
+            <br><span style = "font-size: 150%">Товары к визиту</span>
+        <!--//qwerty-->
+            <? echo GridView::widget([
+                'dataProvider' => $goodsSalesProvider,
+                'id'=>'goodsSales',
+                'columns'=>[
+                    ['class' => 'yii\grid\ActionColumn',
+                        'template'=>'{delete}',
+                        'buttons'=>[
+                            'delete'=>function($model, $key, $index){
+                                $myurl="index.php?r=client/saledelete&ID_SALE=".$key['ID_SALE'];
+                                return Html::a('<span class="glyphicon glyphicon-trash" style="margin-left: 5px;" onclick=\'return confirm("Вы уверены?")\'></span>', $myurl,[
+                                    'title' => Yii::t('app', 'Удалить'),
+                                ]);
+                            }
+                        ],
+
+                    ],
+                    'ID_SALE',
+                    'good.NAME',
+                    'KOL',
+                    'SUMM'
+                ]
+            ]); ?>
+            <button type='button' style='margin-top: -10px; width: 100%;' class='btn btn-info' data-toggle='modal' data-target='#sales'>Добавить товар</button><br>
+
             <?php
             if ($_GET['ID_VISIT']!=null):
                 echo "<span style=\"font-size: 150%;\">Оплата</span>";
             echo GridView::widget([
                 'dataProvider'=>$oplataProvider,
                 'id'=>'oplata',
-
                 'columns'=>
-
                     [
                         ['class' => 'yii\grid\ActionColumn',
                             'template'=>' {delete}',
                             'buttons'=>[
                                 'delete'=>function($model, $key, $index){
-
                                     $myurl='index.php?r=client/oplatadelete&ID_OPL='.$key['ID_OPL'].'&ID_VISIT='.$key['ID_VIZIT'];
-
                                     return Html::a('<span class="glyphicon glyphicon-trash" style="margin-left: 5px;"  onclick=\'return confirm("Вы уверены?")\'></span>', $myurl,[
                                         'title' => Yii::t('app', 'Удалить'),
                                     ]);
@@ -279,7 +321,6 @@ $('#visitForm').on('beforeSubmit', function()
                         ],
                         ['label' => 'ID',
                             'attribute' => 'ID_OPL',
-
                         ],
                         ['label' => 'Вид оплаты',
                             'attribute' => 'VID_OPL',
@@ -294,11 +335,9 @@ $('#visitForm').on('beforeSubmit', function()
                             }
                             return $result;
                             }
-
                         ],
                         ['label' => 'Сумма',
                             'attribute' => 'SUMM',
-
                         ],
                         ['label' => 'Дата',
                             'attribute' => 'DATE',
@@ -307,21 +346,13 @@ $('#visitForm').on('beforeSubmit', function()
                             }
 
                         ],
-
-
-
-
                     ],
-
-
-
-
             ]);endif;?>
 
         <div style="display: flex">
 
+        <button class="btn-info btn" style="height: 50%;font-weight: bold;margin-top: 25px;">Σ</button> <?= $form->field($visit, 'SUMMAO')->textInput(['style'=>'margin-left:10px;width:70px;'])->label('Оплата', ['style'=>'margin-left:10px; '])?>
 
-        <?= $form->field($visit, 'SUMMAO')->textInput(['style'=>'margin-left:10px;width:70px;'])->label('Оплата', ['style'=>'margin-left:10px; '])?>
         <?=$form->field($visit, 'VIDOPL')->dropDownList([
             '0' => 'Наличные',
             '1' => 'Б/нал',
@@ -336,7 +367,7 @@ $('#visitForm').on('beforeSubmit', function()
         <div class="row">
             <div class="col-md-2">
 
-        <?= Html::submitButton('Сохранить',['class'=>'btn btn-success', 'onclick'=>'this.disabled=true;this.form.submit()'])?>
+                <?= Html::submitButton('Сохранить',['class'=>'btn btn-success', 'onclick'=>'this.disabled=true;this.form.submit()'])?>
 
             </div>
         <?php if ($_GET['ID_VISIT']!=NULL):?>

@@ -43,7 +43,6 @@ class ClinicController extends AppController
 
 
     public function actionBrandimage() {
-        $brandImagesTypes = BrandImagesTypesForm::find()->select(['typeName'])->column();
 
         if (!$_GET['id']) {
             $brandImage = new BrandImagesForm();
@@ -56,7 +55,7 @@ class ClinicController extends AppController
                 $this->redirect("index.php?r=clinic%2Fclinicpage");
             }
         }
-        return $this->render('brandimage', compact('brandImage', 'brandImagesTypes'));
+        return $this->render('brandimage', compact('brandImage'));
     }
 
 

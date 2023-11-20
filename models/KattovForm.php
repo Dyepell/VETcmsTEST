@@ -18,7 +18,7 @@ class KattovForm extends ActiveRecord
     {
         return [
             'ID_TOV' => 'ID ',
-            'NAME' => 'Наименование',
+            'NAME' => 'Наименование товара',
             'country' => 'Страна производитель',
             'description' => 'Описание товара'
         ];
