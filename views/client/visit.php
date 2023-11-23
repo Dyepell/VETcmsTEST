@@ -274,31 +274,33 @@ $('#visitForm').on('beforeSubmit', function()
             Истории болезни
         </button>
         <a href="index.php?r=client/analysis&ID_PAC=<?=$visit->ID_PAC?>" class="btn btn-primary">Исследования</a>
-            <br><span style = "font-size: 150%">Товары к визиту</span>
+<!--            <br><span style = "font-size: 150%">Товары к визиту</span>-->
         <!--//qwerty-->
-            <? echo GridView::widget([
-                'dataProvider' => $goodsSalesProvider,
-                'id'=>'goodsSales',
-                'columns'=>[
-                    ['class' => 'yii\grid\ActionColumn',
-                        'template'=>'{delete}',
-                        'buttons'=>[
-                            'delete'=>function($model, $key, $index){
-                                $myurl="index.php?r=client/saledelete&ID_SALE=".$key['ID_SALE'];
-                                return Html::a('<span class="glyphicon glyphicon-trash" style="margin-left: 5px;" onclick=\'return confirm("Вы уверены?")\'></span>', $myurl,[
-                                    'title' => Yii::t('app', 'Удалить'),
-                                ]);
-                            }
-                        ],
-
-                    ],
-                    'ID_SALE',
-                    'good.NAME',
-                    'KOL',
-                    'SUMM'
-                ]
-            ]); ?>
-            <button type='button' style='margin-top: -10px; width: 100%;' class='btn btn-info' data-toggle='modal' data-target='#sales'>Добавить товар</button><br>
+            <?
+//            echo GridView::widget([
+//                'dataProvider' => $goodsSalesProvider,
+//                'id'=>'goodsSales',
+//                'columns'=>[
+//                    ['class' => 'yii\grid\ActionColumn',
+//                        'template'=>'{delete}',
+//                        'buttons'=>[
+//                            'delete'=>function($model, $key, $index){
+//                                $myurl="index.php?r=client/saledelete&ID_SALE=".$key['ID_SALE'];
+//                                return Html::a('<span class="glyphicon glyphicon-trash" style="margin-left: 5px;" onclick=\'return confirm("Вы уверены?")\'></span>', $myurl,[
+//                                    'title' => Yii::t('app', 'Удалить'),
+//                                ]);
+//                            }
+//                        ],
+//
+//                    ],
+//                    'ID_SALE',
+//                    'good.NAME',
+//                    'KOL',
+//                    'SUMM'
+//                ]
+//            ]);
+            ?>
+<!--            <button type='button' style='margin-top: -10px; width: 100%;' class='btn btn-info' data-toggle='modal' data-target='#sales'>Добавить товар</button><br>-->
 
             <?php
             if ($_GET['ID_VISIT']!=null):
@@ -351,7 +353,8 @@ $('#visitForm').on('beforeSubmit', function()
 
         <div style="display: flex">
 
-        <button class="btn-info btn" style="height: 50%;font-weight: bold;margin-top: 25px;">Σ</button> <?= $form->field($visit, 'SUMMAO')->textInput(['style'=>'margin-left:10px;width:70px;'])->label('Оплата', ['style'=>'margin-left:10px; '])?>
+<!--        <button class="btn-info btn" style="height: 50%;font-weight: bold;margin-top: 25px;">Σ</button> -->
+            <?= $form->field($visit, 'SUMMAO')->textInput(['style'=>'margin-left:10px;width:70px;'])->label('Оплата', ['style'=>'margin-left:10px; '])?>
 
         <?=$form->field($visit, 'VIDOPL')->dropDownList([
             '0' => 'Наличные',

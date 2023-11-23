@@ -375,38 +375,38 @@ class ClientController extends AppController
                 }
 
                 //MyUtility::Dump($oplata);
-                if ($oplata->VID_OPL == 0){
-                    $clinic = ClinicForm::findOne(['id'=>1]);
-                    $cashboxResponse['code'] = 'none';
-                    //$goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
-                    $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
-                        $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
-                    $qty = 10000;
-                    $price = $oplata->SUMM * 100;
-                    $goods = [
-                        0 => [
-                            'productName' => "Ветеринарные услуги",
-                            'qty' => "$qty",
-                            'price' => "$price",
-                            'type' => 4
-                        ]];
-                    $mercuryWrapper = $mercuryWrapper->OpenSession();
-                    $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
-
-                    if ($cashboxResponse['code'] == 200) {
-                        $checkModel = new SaleChecksForm();
-                        $checkModel->visitId = $visit->ID_VISIT;
-                        $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
-                        $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
-                        $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
-                        $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
-                        $checkModel->date = date("Y-m-d H:i:s");
-                        $checkModel->save();
-                    } else {
-                        $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
-                        file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
-                    }
-                }
+//                if ($oplata->VID_OPL == 0){
+//                    $clinic = ClinicForm::findOne(['id'=>1]);
+//                    $cashboxResponse['code'] = 'none';
+//                    //$goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
+//                    $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+//                        $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
+//                    $qty = 10000;
+//                    $price = $oplata->SUMM * 100;
+//                    $goods = [
+//                        0 => [
+//                            'productName' => "Ветеринарные услуги",
+//                            'qty' => "$qty",
+//                            'price' => "$price",
+//                            'type' => 4
+//                        ]];
+//                    $mercuryWrapper = $mercuryWrapper->OpenSession();
+//                    $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
+//
+//                    if ($cashboxResponse['code'] == 200) {
+//                        $checkModel = new SaleChecksForm();
+//                        $checkModel->visitId = $visit->ID_VISIT;
+//                        $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
+//                        $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
+//                        $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
+//                        $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
+//                        $checkModel->date = date("Y-m-d H:i:s");
+//                        $checkModel->save();
+//                    } else {
+//                        $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
+//                        file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
+//                    }
+//                }
 
                 $oplata->save();
                 $visit->DOLG=$visit->DOLG-$visit->SUMMAO;
@@ -1022,38 +1022,38 @@ class ClientController extends AppController
 
         $saleId = Yii::$app->db->lastInsertID;
 
-        if ($model->VID_OPL == 0){
-            $clinic = ClinicForm::findOne(['id'=>1]);
-            $cashboxResponse['code'] = 'none';
-            $goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
-            $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
-                $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
-            $qty = $model->KOL * 10000;
-            $price = $model->SUMM * 100;
-            $goods = [
-                0 => [
-                    'productName' => "$goodModel->NAME",
-                    'qty' => "$qty",
-                    'price' => "$price",
-                    'type' => 1
-                ]];
-            $mercuryWrapper->OpenSession();
-            $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
-
-            if ($cashboxResponse['code'] == 200) {
-                $checkModel = new SaleChecksForm();
-                $checkModel->saleId = $saleId;
-                $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
-                $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
-                $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
-                $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
-                $checkModel->date = date("Y-m-d H:i:s");
-                $checkModel->save();
-            } else {
-                $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
-                file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
-            }
-        }
+//        if ($model->VID_OPL == 0){
+//            $clinic = ClinicForm::findOne(['id'=>1]);
+//            $cashboxResponse['code'] = 'none';
+//            $goodModel = Kattov::findOne(['ID_TOV' => $_GET['goodId']]);
+//            $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+//                $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
+//            $qty = $model->KOL * 10000;
+//            $price = $model->SUMM * 100;
+//            $goods = [
+//                0 => [
+//                    'productName' => "$goodModel->NAME",
+//                    'qty' => "$qty",
+//                    'price' => "$price",
+//                    'type' => 1
+//                ]];
+//            $mercuryWrapper->OpenSession();
+//            $cashboxResponse = $mercuryWrapper->CreateCheck($goods);
+//
+//            if ($cashboxResponse['code'] == 200) {
+//                $checkModel = new SaleChecksForm();
+//                $checkModel->saleId = $saleId;
+//                $checkModel->shiftNum = $cashboxResponse['data']['shiftNum'];
+//                $checkModel->checkNum = $cashboxResponse['data']['checkNum'];
+//                $checkModel->fiscalDocNum = $cashboxResponse['data']['fiscalDocNum'];
+//                $checkModel->fiscalSign = $cashboxResponse['data']['fiscalSign'];
+//                $checkModel->date = date("Y-m-d H:i:s");
+//                $checkModel->save();
+//            } else {
+//                $logStr = "RequestTime: " . date("Y-m-d H:i:s") . " | Code: " . $cashboxResponse['code'] . " | Data: " . $cashboxResponse['data'] . "\n";
+//                file_put_contents(__DIR__ . '/../logs/failedCahsboxRequests.txt', $logStr, FILE_APPEND);
+//            }
+//        }
 
         return $this->redirect("index.php?r=client/sale");
     }
@@ -1337,12 +1337,19 @@ class ClientController extends AppController
 
         $vizitkaStyle=[
             'width'=>150,
-            'height'=>75,
+            'height'=>100,
             'wrappingStyle'=>'inline'
         ];
 
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
+        //$section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
+        $cellHRight = array('align' => 'right', 'spaceAfter'=>100);
+        $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
+        $table = $section->addTable('Colspan Rowspan1');
+        $table->addRow(null, array('tblHeader' => true));
+        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        $table->addCell(6000, $cellHRight)->addImage(\Yii::getAlias('@webroot')."/images/qrImage.jpg", array('wrappingStyle'=>'inline', 'align' => 'right','width'=>200, 'height'=>70));
+
         $section->addTextBreak(1);
         $section->addText('СОГЛАСИЕ НА ТЕРАПЕВТИЧЕСКИЕ И ХИРУРГИЧЕСКИЕ МАНИПУЛЯЦИИ', ['bold'=>true ], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
         $section->addTextBreak();
@@ -2169,7 +2176,19 @@ class ClientController extends AppController
 
         $section = $document->addSection();
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
+        $cellHCentered = array('align' => 'both', 'spaceAfter'=>100);
+
+
+        //$section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        //$section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100,);
+        $cellHRight = array('align' => 'right', 'spaceAfter'=>100);
+        $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
+        $table = $section->addTable('Colspan Rowspan1');
+        $table->addRow(null, array('tblHeader' => true));
+        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        $table->addCell(6000, $cellHRight)->addImage(\Yii::getAlias('@webroot')."/images/qrImage.jpg", array('wrappingStyle'=>'inline', 'align' => 'right','width'=>200, 'height'=>70));
+
+
         $section->addText('УЗИ', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText(date('d.m.Y', strtotime($uzi->DATE)), ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
@@ -2207,7 +2226,13 @@ class ClientController extends AppController
 
         $section = $document->addSection();
         $document->addParagraphStyle('p2Style', array('align'=>'top', 'spaceAfter'=>0));
-        $section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
+        //$section->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100, 'align'=>'right'));
+        $cellHRight = array('align' => 'right', 'spaceAfter'=>100);
+        $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
+        $table = $section->addTable('Colspan Rowspan1');
+        $table->addRow(null, array('tblHeader' => true));
+        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        $table->addCell(6000, $cellHRight)->addImage(\Yii::getAlias('@webroot')."/images/qrImage.jpg", array('wrappingStyle'=>'inline', 'align' => 'right','width'=>200, 'height'=>70));
         $section->addText('ИССЛЕДОВАНИЕ', ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText(date('d.m.Y', strtotime($other->DATE)), ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
         $section->addText('Клиент - '.$client->FAM.' '.$client->NAME.' '.$client->OTCH, ['bold'=>true], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH  ]);
@@ -2255,7 +2280,7 @@ class ClientController extends AppController
 
         $vizitkaStyle=[
             'width'=>150,
-            'height'=>75,
+            'height'=>100,
             'wrappingStyle'=>'inline'
         ];
 
@@ -2263,7 +2288,14 @@ class ClientController extends AppController
         $document->setDefaultFontName('Calibri');
         $document->setDefaultFontSize(6);
         $titleSection=$document->addSection(['marginTop' => '400', 'marginLeft'=>'600', 'marginRight'=>'600', 'marginBottom'=>'400', 'breakType'=>'continuous']);
-        $titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
+        //$titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
+        $cellHRight = array('align' => 'right', 'spaceAfter'=>100);
+        $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
+        $table = $titleSection->addTable('Colspan Rowspan1');
+        $table->addRow(null, array('tblHeader' => true));
+        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        $table->addCell(6000, $cellHRight)->addImage(\Yii::getAlias('@webroot')."/images/qrImage.jpg", array('wrappingStyle'=>'inline', 'align' => 'right','width'=>200, 'height'=>70));
+
         $footer = $titleSection->addFooter();
         $textRun = $footer->addTextRun(array('alignment' => Jc::END));
         $textRun->addField('PAGE', '&R&F');
