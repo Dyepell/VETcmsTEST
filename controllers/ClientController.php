@@ -1347,10 +1347,10 @@ class ClientController extends AppController
         $cellVCentered = array('valign' => 'both', 'spaceAfter'=>100);
         $table = $section->addTable('Colspan Rowspan1');
         $table->addRow(null, array('tblHeader' => true));
-        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>150, 'height'=>100));
+        $table->addCell(6000, $cellVCentered)->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", array('wrappingStyle'=>'inline','width'=>127, 'height'=>85));
         //$table->addCell(6000, $cellHRight)->addImage(\Yii::getAlias('@webroot')."/images/qrImage.jpg", array('wrappingStyle'=>'inline', 'align' => 'right','width'=>200, 'height'=>70));
 
-        $section->addTextBreak(1);
+        //$section->addTextBreak(1);
         $section->addText('СОГЛАСИЕ НА ТЕРАПЕВТИЧЕСКИЕ И ХИРУРГИЧЕСКИЕ МАНИПУЛЯЦИИ', ['bold'=>true ], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
         $section->addTextBreak();
 
