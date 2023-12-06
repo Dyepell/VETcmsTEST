@@ -14,7 +14,6 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
-/config
 /analyzes
 /reports
 /logs
