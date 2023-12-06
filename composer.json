@@ -25,7 +25,8 @@
         "immusen/yii2-swoole-websocket": "^1.11",
         "yiisoft/yii2-httpclient": "*",
         "lepiaf/serialport": "^1.1",
-        "degordian/yii2-webhooks": "dev-master"
+        "degordian/yii2-webhooks": "dev-master",
+        "bubasuma/yii2-simplechat": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

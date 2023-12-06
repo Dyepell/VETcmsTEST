@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "125739b917d50972e390bb02b4769604",
+    "content-hash": "9d4f6383b15a4cc8471aaaa45dadace2",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -137,6 +137,59 @@
             "license": [
                 "MIT"
             ]
+        },
+        {
+            "name": "bubasuma/yii2-simplechat",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bubasuma/yii2-simplechat.git",
+                "reference": "1d3c2c30df72d29ff1a0bf62832275f14893a1de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bubasuma/yii2-simplechat/zipball/1d3c2c30df72d29ff1a0bf62832275f14893a1de",
+                "reference": "1d3c2c30df72d29ff1a0bf62832275f14893a1de",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0.0"
+            },
+            "require-dev": {
+                "bower-asset/twig.js": "0.8.4@stable",
+                "yiisoft/yii2-bootstrap": "~2.0.0",
+                "yiisoft/yii2-faker": "*",
+                "yiisoft/yii2-twig": "dev-master"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bubasuma\\simplechat\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Buba Suma",
+                    "email": "bubasuma@gmail.com"
+                }
+            ],
+            "description": "A simple chat for your yii2 application",
+            "keywords": [
+                "chat",
+                "conversation",
+                "extension",
+                "message",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/bubasuma/yii2-simplechat/issues",
+                "source": "https://github.com/bubasuma/yii2-simplechat/tree/master"
+            },
+            "time": "2016-06-19T07:00:25+00:00"
         },
         {
             "name": "cebe/markdown",

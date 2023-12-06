@@ -62,12 +62,14 @@ use app\models\BiohimForm;
 use app\models\Pacient;
 use Yii;
 use app\models\BrandImagesForm;
+use bubasuma\simplechat\controllers\ControllerTrait;
 use MercuryAPI\MercuryWrapper;
 
 
 class ClientController extends AppController
 {
     public $layout='basic';
+    use ControllerTrait;
 
     public function beforeAction($action)
     {
@@ -124,7 +126,6 @@ class ClientController extends AppController
     public function actionClientout(){
         $selectClient =1;
         return '123';
-
     }
 
 
