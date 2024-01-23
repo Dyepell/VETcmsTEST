@@ -1630,7 +1630,7 @@ class ClientController extends AppController
         $document->addParagraphStyle('p2Style', array('align'=>'left', 'spaceAfter'=>0));
         $section->addText('     Исполнитель: ИП Зайцева Наталья Владимировна, ИНН 592006771808, ОГРНИП 308592021200018, 617760, Пермский край, г. Чайковский, ул. Ленина, д. 39,   кв. 72, тел. (34241) 42130, 89097269449', $textStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('     Заказчик:' . $fio . ', ' . $adres, $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
-        $section->addText('     Cоставили настоящий  акт об оказанных ветеринарных услугах к договору об оказании ветеринарных услуг   № __________ от ' . date('Y.m.d', strtotime($visit->DATE)) . ':', $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
+        $section->addText('     Cоставили настоящий  акт об оказанных ветеринарных услугах к договору об оказании ветеринарных услуг   № __________ от «____» ____________20___ г.:', $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
         $facilities=Facility::find()
             ->where(['facility.ID_CL' => $client->ID_CL])
