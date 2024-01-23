@@ -1616,7 +1616,8 @@ class ClientController extends AppController
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres= 'г. ' .$client->CITY . ', ул. ' . $client->STREET.', д. '.$client->HOUSE.', кв '.$client->FLAT;
-
+				$clinic = ClinicForm::find()->where(['id' => 1])->one();
+		    $clinicAddress = $clinic->address;
         $document=new PhpWord();
         $document->setDefaultFontName('Times New Roman');
         $document->setDefaultFontSize(12);
@@ -1628,7 +1629,7 @@ class ClientController extends AppController
         $section->addText('Акт выполненных работ № ____ от ' . date('Y.m.d', strtotime($visit->DATE)), $titleStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500]);
 
         $document->addParagraphStyle('p2Style', array('align'=>'left', 'spaceAfter'=>0));
-        $section->addText('     Исполнитель: ИП Зайцева Наталья Владимировна, ИНН 592006771808, ОГРНИП 308592021200018, 617760, Пермский край, г. Чайковский, ул. Ленина, д. 39,   кв. 72, тел. (34241) 42130, 89097269449', $textStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
+        $section->addText('     Исполнитель: ИП Зайцева Наталья Владимировна, ИНН 592006771808, ОГРНИП 308592021200018, '. $clinicAddress .', тел. (34241) 42130, 89097269449', $textStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('     Заказчик:' . $fio . ', ' . $adres, $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('     Cоставили настоящий  акт об оказанных ветеринарных услугах к договору об оказании ветеринарных услуг   № __________ от «____» ____________20___ г.:', $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
