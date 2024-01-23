@@ -61,8 +61,6 @@ $form = ActiveForm::begin(['options'=>['id'=>'searchForm','data-pjax' => true,]]
                             },],
 
                     ],
-
-
                     'FAM',
                     'NAME',
                     'OTCH',
@@ -87,7 +85,6 @@ $js = <<<JS
     
     document.getElementById('searchSubmit').click();
      
-        
  });
 
 $('.grid-view tbody tr').on('click', function()

@@ -32,6 +32,7 @@ function dump($arr){
         });
         $(".prihod_block").hide();
         $(block).show();
+        console.log(block);
     }
     function sendForm() {
         var ID_DOC;
@@ -40,6 +41,8 @@ function dump($arr){
         var DISCOUNT_PROCENT;
         var VID_OPL;
         var DATE;
+        var goodId;
+
         ID_DOC=$("#doctors").val();
         $('input:checkbox:checked').each(function(){
             str=($(this).val());
@@ -68,103 +71,103 @@ function dump($arr){
             DATE=$("#inputDate").val()
         );
         VID_OPL=$("#vidOpl").val();
+        goodId = $("#products").val();
 
         console.log(PRIHOD_ID);
         console.log(KOL);
         console.log(DISCOUNT_PROCENT);
         console.log(VID_OPL);
         console.log(DATE);
+        console.log(goodId);
+
         document.location.href="index.php?r=client/new_sale_form&ID_PRIHOD="+PRIHOD_ID
             +"&ID_DOC="+ID_DOC
             +"&KOL="+KOL
             +"&DISCOUNT_PROCENT="+DISCOUNT_PROCENT
             +"&VID_OPL="+VID_OPL
-            +"&DATE="+DATE;
+            +"&DATE="+DATE
+            + "&goodId=" + goodId;
     }
 </script>
 <div class="container-fluid row" style="margin-top: 70px;margin-bottom: 50px;">
-
-    <div class="form-group">
-        <label for="exampleFormControlSelect1">Сотрудник</label>
-        <select class="form-control" id="doctors" >
-
-            <? foreach ($doctors as $key=>$doctor): ?>
-
-                <option   value="<?=$doctor->ID_DOC?>" ><?=$doctor->NAME?></option>
-            <? endforeach; ?>
-        </select>
-
-        <label for="exampleFormControlSelect1">Товар</label>
-        <select class="form-control" id="products" onchange="select_products(<?=$item[kol]?>)">
-        <? foreach ($salesProducts as $key=>$item): ?>
-
-            <option   value="<?=$key?>" ><?=$item[name]?></option>
+    <label for="exampleFormControlSelect1">Сотрудник</label>
+    <select class="form-control" id="doctors" >
+        <? foreach ($doctors as $key=>$doctor): ?>
+            <option   value="<?=$doctor->ID_DOC?>" ><?=$doctor->NAME?></option>
         <? endforeach; ?>
-        </select>
-    </div>
-    <? foreach ($salesProducts as $key=>$item): ?>
-    <div id="<?=$key?>_block" class="prihod_block" style="display: none;">
-        <div class="container-fluid row" >
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">ID Поступления</th>
-                    <th scope="col">Дата поступления</th>
-                    <th scope="col">Примечание</th>
-                    <th scope="col">Цена продажи</th>
-                    <th scope="col">В наличии</th>
-                    <th scope="col">Выбор</th>
-                </tr>
-                </thead>
-                <tbody>
-                <? $counter=1; ?>
-                <?foreach ($item[prihods] as $key=>$prihod):?>
-                <? if($prihod[kol]==0): ?>
-                        <tr class="copacity_50">
-                <? else: ?>
+    </select>
+    <div class="row">
+        <div class="clinic-col" style="min-height: 0px; margin: 15px;">
+            <label for="exampleFormControlSelect1" style="padding: 5px;">Товар</label>
+            <select class="form-control" id="products" onchange="select_products(<?=$item[kol]?>)">
+                <? foreach ($salesProducts as $key=>$item): ?>
+                    <option   value="<?=$key?>" ><?=$item[name]?></option>
+                <?endforeach;?>
+            </select>
+
+            <? foreach ($salesProducts as $key=>$item): ?>
+            <div id="<?=$key?>_block" class="prihod_block" style="display: none;">
+                <div class="container-fluid row" >
+                    <table class="table">
+                        <thead>
                         <tr>
-                <? endif; ?>
-
-                    <th scope="row"><?=$counter?></th>
-                    <td><?=$key?></td>
-                    <td><?=date('d.m.Y', strtotime($prihod[date]))?></td>
-                    <td><?=$prihod[prim]?></td>
-                    <td><?=$prihod[sellPrice]?></td>
-                    <td><?=$prihod[kol]?></td>
-                    <td>
-                    <? if($prihod[kol]==0): ?>
-                        <input type="checkbox" value="<?=$key?>_radio" onchange="maxChange(<?=$prihod[kol]?>)" disabled id="<?=$key?>_radio">
-                    <? else: ?>
-                        <input type="checkbox" value="<?=$key?>_radio" onchange="maxChange(<?=$prihod[kol]?>)" id="<?=$key?>_radio">
-                    <? endif; ?>
-
-
-                    </td>
-                </tr>
-                <? $counter++; ?>
-                <? endforeach; ?>
-
-
-                </tbody>
-            </table>
-
+                            <th scope="col">#</th>
+                            <th scope="col">ID Поступления</th>
+                            <th scope="col">Дата поступления</th>
+                            <th scope="col">Примечание</th>
+                            <th scope="col">Цена продажи</th>
+                            <th scope="col">В наличии</th>
+                            <th scope="col">Выбор</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <? $counter=1; ?>
+                        <?foreach ($item[prihods] as $key=>$prihod):?>
+                        <? if($prihod[kol]==0): ?>
+                                <tr class="copacity_50">
+                        <? else: ?>
+                                <tr>
+                        <? endif; ?>
+                            <th scope="row"><?=$counter?></th>
+                            <td><?=$key?></td>
+                            <td><?=date('d.m.Y', strtotime($prihod[date]))?></td>
+                            <td><?=$prihod[prim]?></td>
+                            <td class = 'sellPrice'><?=$prihod[sellPrice]?></td>
+                            <td><?=$prihod[kol]?></td>
+                            <td>
+                            <? if($prihod[kol]==0): ?>
+                                <input type="checkbox" value="<?=$key?>_radio" onchange="maxChange(<?=$prihod[kol]?>)" disabled id="<?=$key?>_radio">
+                            <? else: ?>
+                                <input type="checkbox" value="<?=$key?>_radio" onchange="maxChange(<?=$prihod[kol]?>)" id="<?=$key?>_radio">
+                            <? endif; ?>
+                            </td>
+                        </tr>
+                        <? $counter++; ?>
+                        <? endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <? endforeach; ?>
+            <div class="row" style="padding: 10px;">
+                <div class="col-lg-1">
+                    <label for="exampleFormControlSelect1">Количество</label>
+                    <br>
+                    <input type="number" class="form-control" id="inputKol" name="tentacles" min="0" max="1000">
+                </div>
+                <div class="col-lg-1">
+                    <label for="exampleFormControlSelect1">Скидка</label>
+                    <br>
+                    <input type="number" value="0" class="form-control" id="inputDiscount" name="tentacles" min="0" max="100">
+                </div>
+            </div>
         </div>
+        <div class="col">
+            <a href="" class="btn btn-info" style="width: 80%; margin-right: 10%; margin-left: 10%">Добавить товар</a>
+        </div>
+
     </div>
-    <? endforeach; ?>
     <div class="container-fluid row">
-        <div class="col-md-2">
-            <label for="exampleFormControlSelect1">Количество</label>
-            <br>
-            <input type="number" class="form-control" style="width: 150px;" id="inputKol" name="tentacles" min="0" max="1000">
-        </div>
-
-        <div class="col-md-2">
-            <label for="exampleFormControlSelect1">Скидка</label>
-            <br>
-            <input type="number" value="0" class="form-control" style="width: 150px;" id="inputDiscount" name="tentacles" min="0" max="100">
-        </div>
-
         <div class="col-md-2">
             <label for="exampleFormControlSelect1">Вид оплаты</label>
             <br>
@@ -193,8 +196,30 @@ function dump($arr){
 
 
 <?php
+$js = <<<JS
 
-?>
+function getScannedGood() {
+        $.ajax({
+            url:  'index.php?r=shop/getscannedgood',
+            type: 'POST',
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById('products').value= response;
+                    select_products();
+                }
+            });
+        return false;
+}
+
+//let barcodeInterval = setInterval(getScannedGood, 500);
+
+$("#products" ).on( "focus", function() {
+    clearInterval(barcodeInterval);
+});
+
+JS;
+
+$this->registerJs($js);?>
 
 
 

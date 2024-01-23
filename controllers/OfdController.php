@@ -1,19 +1,9 @@
 <?php
     namespace app\controllers;
 
-    use app\models\Client;
-    use app\models\Doctor;
-    use app\models\Istbol;
-    use app\models\Pacient;
-    use app\models\Sl_vakc;
-    use app\models\Vizit;
-    use yii\base\BaseObject;
-    use yii\httpclient;
-    use yii\data\ActiveDataProvider;
-    use app\models\DoctorForm;
-    use MercuryAPI\MercuryAPI;
+    use app\models\ClinicForm;
+    use MercuryAPI\MercuryWrapper;
     use SbisAPI\SbisAPI;
-    use Yii;
 
 
 
@@ -42,11 +32,14 @@ class OfdController extends AppController
         return true;
     }
     public function actionPrintCheck(){
-        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
+        $mercuryApi = new MercuryWrapper('http://localhost:50010/api.json');
     }
     public function actionMercurytest()
     {
-        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
+        $clinic = ClinicForm::findOne(['id'=>1]);
+
+        $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+            $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
 
         $goods = [
             'productName' => 'Ветеринарные услуги',
@@ -63,10 +56,10 @@ class OfdController extends AppController
 //            echo 'Sum:';
 //            $this->dump($test);
 //        }
-        $mercuryApi->OpenSession();
-        $this->dump($mercuryApi->sessionKey);
-        if ($_GET['mode'] == '050771') {
+        $mercuryWrapper->OpenSession();
+        $this->dump($mercuryWrapper->sessionKey);
 
+        if ($_GET['mode'] == '050771') {
             return $this->render('debug', compact('goods'));
         }
 
@@ -77,12 +70,14 @@ class OfdController extends AppController
     {
         $result['code'] = '228';
         $result['data'] = $_GET['request'];
+        $clinic = ClinicForm::findOne(['id'=>1]);
 
-        $mercuryApi = new MercuryAPI('http://localhost:50010/api.json');
+        $mercuryWrapper = new MercuryWrapper('http://localhost:50010/api.json',
+            $clinic->address, $clinic->clinicName, $clinic->email, $clinic->entrepreneurName, $clinic->entrepreneurINN);
 
-        if (method_exists($mercuryApi, $_GET['request'])) {
+        if (method_exists($mercuryWrapper, $_GET['request'])) {
             $temp = $_GET['request'];
-            $result = $mercuryApi->$temp();
+            $result = $mercuryWrapper->$temp();
             return json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         }
         return json_encode($result, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);

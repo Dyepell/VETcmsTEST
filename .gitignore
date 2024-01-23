@@ -14,12 +14,11 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
-/config
 /analyzes
 /reports
 /logs
 /uploads
-/widgets/MercuryAPI/SessionKey.json
+/widgets/MercuryWrapper/SessionKey.json
 
 
 # composer itself is not needed

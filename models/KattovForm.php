@@ -12,25 +12,26 @@ class KattovForm extends ActiveRecord
     {
         return 'kattov';
     }
+
+
     public  function attributeLabels()
     {
         return [
-            'ID_TOV'=>'ID ',
-            'NAME'=>'Наименование',
-
-
-
-
+            'ID_TOV' => 'ID ',
+            'NAME' => 'Наименование товара',
+            'country' => 'Страна производитель',
+            'description' => 'Описание товара'
         ];
     }
+
+
     public function rules()
     {
         return [
 
-            [["ID_TOV", "NAME"], 'safe'],
+            [["ID_TOV", "NAME", 'country', 'description'], 'safe'],
 
 
         ];
     }
-
 }

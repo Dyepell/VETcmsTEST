@@ -2,39 +2,41 @@
 
 
 namespace app\models;
-use MyUtility\MyUtility;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
+use MyUtility\MyUtility;
 
 
-class BrandImagesForm extends ActiveRecord
+class GoodsImportForm extends ActiveRecord
 {
-    public $image;
-    private $imagePath;
+    public $csvFile;
 
 
     public  static function tableName() {
-        return 'brand_images';
+        return 'prihod_tovara';
     }
 
 
     public  function attributeLabels() {
         return [
-            'id' => 'ID изображения',
-            'clinicId' => 'ID клиники',
-            'imageName' => 'Наименование изображения',
-            'imageDescription' => 'Описание изображения',
-            'imageType' => 'Тип изображения',
-            'imagePath' => 'Путь к файлу',
-            'image' => 'Image'
+            'sourceId'=> 'Источник',
+            'csvFile' => 'CSV файл'
         ];
+    }
+
+    public function attributes()
+    {
+        return array_merge(
+            parent::attributes(),
+            ['sourceId']
+        );
     }
 
 
     public function rules() {
         return [
-            [['image'], 'file', 'skipOnEmpty' => true,'extensions' => 'png, jpg, ico'],
-            [['id', 'clinicId', 'imageDescription', 'imageName', 'imageType'], 'safe']
+            [['csvFile'], 'file', 'skipOnEmpty' => true,'extensions' => 'csv'],
+            [['sourceId'], 'safe']
         ];
     }
 
@@ -52,6 +54,16 @@ class BrandImagesForm extends ActiveRecord
             return true;
         }else{
             return false;
+        }
+    }
+
+
+    public function Import() {
+
+        if($this->validate()) {
+            file_put_contents(__DIR__ . "/../logs/csvLog.txt", 'test');
+            return true;
+
         }
     }
 

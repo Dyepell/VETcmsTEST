@@ -3,12 +3,10 @@ namespace app\controllers;
 
 use app\models\BrandImagesForm;
 use Yii;
-use yii\base\BaseObject;
 use app\models\Clinic;
 use app\models\ClinicForm;
 use app\models\BrandImagesTypesForm;
 use yii\data\ActiveDataProvider;
-use yii\web\UploadedFile;
 
 
 class ClinicController extends AppController
@@ -45,7 +43,6 @@ class ClinicController extends AppController
 
 
     public function actionBrandimage() {
-        $brandImagesTypes = BrandImagesTypesForm::find()->select(['typeName'])->column();
 
         if (!$_GET['id']) {
             $brandImage = new BrandImagesForm();
@@ -58,7 +55,7 @@ class ClinicController extends AppController
                 $this->redirect("index.php?r=clinic%2Fclinicpage");
             }
         }
-        return $this->render('brandimage', compact('brandImage', 'brandImagesTypes'));
+        return $this->render('brandimage', compact('brandImage'));
     }
 
 

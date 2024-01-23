@@ -121,3 +121,25 @@ a.desc:after {
     margin-left: 10px;
     min-height: 500px;
 }
+
+.cashbox-response {
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    margin-top: 10px;
+}
+
+.cashbox-response-error {
+    background-color: #ffb3b3;
+}
+
+.cashbox-response-ok {
+    background-color: #b3ffb3;
+}
+
+.cashbox-command-button {
+    margin-top: 15px;
+    width: 100%;
+    font-size: 200%;
+}
+

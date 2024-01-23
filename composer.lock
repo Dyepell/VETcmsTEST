@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56e87e5b8b857c4a3328793a7dae507d",
+    "content-hash": "9d4f6383b15a4cc8471aaaa45dadace2",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -139,6 +139,59 @@
             ]
         },
         {
+            "name": "bubasuma/yii2-simplechat",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bubasuma/yii2-simplechat.git",
+                "reference": "1d3c2c30df72d29ff1a0bf62832275f14893a1de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bubasuma/yii2-simplechat/zipball/1d3c2c30df72d29ff1a0bf62832275f14893a1de",
+                "reference": "1d3c2c30df72d29ff1a0bf62832275f14893a1de",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0.0"
+            },
+            "require-dev": {
+                "bower-asset/twig.js": "0.8.4@stable",
+                "yiisoft/yii2-bootstrap": "~2.0.0",
+                "yiisoft/yii2-faker": "*",
+                "yiisoft/yii2-twig": "dev-master"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bubasuma\\simplechat\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Buba Suma",
+                    "email": "bubasuma@gmail.com"
+                }
+            ],
+            "description": "A simple chat for your yii2 application",
+            "keywords": [
+                "chat",
+                "conversation",
+                "extension",
+                "message",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/bubasuma/yii2-simplechat/issues",
+                "source": "https://github.com/bubasuma/yii2-simplechat/tree/master"
+            },
+            "time": "2016-06-19T07:00:25+00:00"
+        },
+        {
             "name": "cebe/markdown",
             "version": "1.2.1",
             "source": {
@@ -201,6 +254,58 @@
                 "source": "https://github.com/cebe/markdown"
             },
             "time": "2018-03-26T11:24:36+00:00"
+        },
+        {
+            "name": "degordian/yii2-webhooks",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bornfight/yii2-webhooks.git",
+                "reference": "c6ac105219d7866a3476e11dd49e5967dd7225c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bornfight/yii2-webhooks/zipball/c6ac105219d7866a3476e11dd49e5967dd7225c0",
+                "reference": "c6ac105219d7866a3476e11dd49e5967dd7225c0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "yiisoft/yii2": "^2.0@dev",
+                "yiisoft/yii2-httpclient": "~2.0.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "2.5.x-dev"
+            },
+            "default-branch": true,
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "tests\\unit\\models\\": "tests/unit/models",
+                    "degordian\\webhooks\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rudolf Jurišić",
+                    "email": "rudolf.jurisic@degordian.com"
+                }
+            ],
+            "description": "Yii2 extension for webhooks",
+            "keywords": [
+                "extension",
+                "webhook",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/degordian/yii2-webhooks/issues",
+                "source": "https://github.com/degordian/yii2-webhooks"
+            },
+            "time": "2021-01-29T08:48:36+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -6101,7 +6206,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "execut/yii2-autosize-textarea": 20
+        "execut/yii2-autosize-textarea": 20,
+        "degordian/yii2-webhooks": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

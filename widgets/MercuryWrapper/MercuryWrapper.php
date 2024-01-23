@@ -12,7 +12,7 @@ use yii\httpclient\Client;
  *
  * */
 
-class MercuryAPI
+class MercuryWrapper
 {
     public $sessionKey = '';
     private $client;
@@ -47,9 +47,19 @@ class MercuryAPI
     ];
 
     //http://localhost:50010/api.json
-    public function __construct(string $baseUrl){
+    public function __construct(string $baseUrl, string $address, string $logation, string $email,
+                                string $casierName, string $cashierInn){
         $this->client = new Client(['baseUrl' => $baseUrl]);
-        $this->OpenSession();
+        $this->setUserInfo($address, $logation, $email, $casierName, $cashierInn);
+    }
+
+
+    private function setUserInfo(string $address, string $logation, string $email, string $casierName, string $cashierInn) {
+        $this->address = $address;
+        $this->location = $logation;
+        $this->email = $email;
+        $this->cashierInfo['cashierName'] = $casierName;
+        $this->cashierInfo['cashierINN'] = $cashierInn;
     }
 
 
@@ -61,13 +71,9 @@ class MercuryAPI
     }
 
 
-    function dump($arr){
-        echo '<pre>'.print_r($arr, true).'</pre>';
-    }
-
-
     private function CreateRequest(string $method, array $data): array {
         $result['code'] = 228;
+        $result['lastRequest'] = $this->lastRequest;
         $result['data'] = null;
 
         $response = $this->client->createRequest()->setMethod($method)
@@ -76,7 +82,6 @@ class MercuryAPI
             ->setUrl($this->url)
             ->setData(array_merge($this->defaultRequestData, $data))
             ->send();
-
 
         if ($response->getData() == NULL)
         {
@@ -99,6 +104,7 @@ class MercuryAPI
 
     public function GetDriverInfo() {
         $this->lastRequest = __FUNCTION__;
+
         $result = $this->CreateRequest('POST', ["command" => "GetDriverInfo"]);
         return $result;
     }
@@ -109,15 +115,15 @@ class MercuryAPI
         $result['code'] = 228;
         $result['data'] = '';
 
-        $temp = json_decode(file_get_contents(__DIR__ . '/../../widgets/MercuryAPI/SessionKey.json'), true);
+        $temp = json_decode(file_get_contents(__DIR__ . '/../../widgets/MercuryWrapper/SessionKey.json'), true);
 
-        if (is_null($temp['startSessionTime']) OR ((time() - $temp['startSessionTime']) > 20)) {
+        if (is_null($temp['startSessionTime']) OR ((time() - $temp['startSessionTime']) > 0)) {
             $temp['startSessionTime'] = time();
             $result = $this->CreateRequest('POST', ["command" => "OpenSession"]);
             $this->sessionKey = $result['data']['sessionKey'];
             $temp['sessionKey'] = $this->sessionKey;
             //пихнуть SessionKey в куки
-            file_put_contents(__DIR__ . '/../../widgets/MercuryAPI/SessionKey.json', json_encode($temp));
+            file_put_contents(__DIR__ . '/../../widgets/MercuryWrapper/SessionKey.json', json_encode($temp));
         } else
             $this->sessionKey = $temp['sessionKey'];
 
@@ -154,7 +160,7 @@ class MercuryAPI
     }
 
 
-    public function AddGoods(string $productName, int $qty = 10000, float $price, string $extraGoodInfo = '', int $measureUnit = 0, int $taxCode = 5, int $paymentFormCode = 4, int $productTypeCode = 4) {
+    public function AddGoods(string $productName, int $qty = 10000, float $price, int $productTypeCode = 4, string $extraGoodInfo = '', int $measureUnit = 0, int $taxCode = 5, int $paymentFormCode = 4) {
         $this->lastRequest = __FUNCTION__;
         $result = $this->CreateRequest(
             'POST',
@@ -199,13 +205,18 @@ class MercuryAPI
     }
 
 
-    public function CreateCheck(array $goods = [], int $payType = 1, string $buyerEmail = '') {
+    public function CreateCheck(array $goods = [
+            0 => [
+                'productName' => 'Ветеринарные услуги',
+                'qty' => '10000',
+                'price' => '100',
+                'type' => 4
+            ]], int $payType = 1, string $buyerEmail = '') {
         $sum = 0;
         $cash = 0;
         $ecash = 0;
         $result['code'] = 228;
         $result['data'] = [];
-        $goods = $this->debugGoods;
 
         $openCheckResult = $this->OpenCheck();
 
@@ -214,7 +225,7 @@ class MercuryAPI
 
         foreach ($goods as $good) {
             //добавить остальные параметры и сделать пересчет qty
-            $this->AddGoods($good['productName'],  $good['qty'], $good['price']);
+            $this->AddGoods($good['productName'],  $good['qty'], $good['price'], $good['type']);
             $sum = $sum +  ($good['qty'] * $good['price']);
         }
 
@@ -289,6 +300,21 @@ class MercuryAPI
             [
                 "sessionKey" => $this->sessionKey,
                 "command" => "GetGoodsBase",
+            ]
+        );
+
+        return $result;
+    }
+
+
+    public function PrintReport(int $reportCode = 5) {
+        $this->lastRequest = __FUNCTION__;
+        $result = $this->CreateRequest(
+            'POST',
+            [
+                "sessionKey" => $this->sessionKey,
+                "command" => "PrintReport",
+                "reportCode" => $reportCode
             ]
         );
 
