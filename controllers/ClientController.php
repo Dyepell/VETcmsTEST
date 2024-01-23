@@ -30,6 +30,7 @@ use app\models\Sale;
 use app\models\SaleChecksForm;
 use app\models\SaleForm;
 use app\models\SaleForm_new;
+use app\models\ScannedDocForm;
 use app\models\SearchForm;
 use app\models\SearchModel;
 use app\models\SelectForm;
@@ -139,7 +140,12 @@ class ClientController extends AppController
         $this->view->title=$model->FAM.' '.$model->NAME;
 
         if ( $model->load(Yii::$app->request->post()) ){
+            if ($model->document <> '') {
+              var_dump('test');
+
+            }
             if ($model->save()){
+                $model->Upload();
                 return $this->refresh();
             }
         }
@@ -169,8 +175,33 @@ class ClientController extends AppController
             $this->refresh();
         }
 
-        return $this->render('anketa', compact('clientId', 'model', 'pacients', 'pacModel', 'newPacient'));
+		    $scannedDocs = new ActiveDataProvider([
+			    'query' => ScannedDocForm::find()->where(['clientId' => $clientId]),
+			    'pagination' => [
+				    'pageSize' => 10,
+
+			    ],
+		    ]);
+
+
+        return $this->render('anketa', compact('clientId', 'model', 'pacients', 'pacModel', 'newPacient', 'scannedDocs'));
     }
+
+		public function actionScanneddocdelete() {
+				$scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
+				$scannedDoc->DeleteDoc();
+				$this->redirect("index.php?r=client/anketa&clientId=$scannedDoc->clientId");
+		}
+
+		public function actionScanneddocownload() {
+				$scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
+
+				$file = __DIR__ . "/../ScannedDocs/" .$scannedDoc->scanPath;
+
+				if (file_exists($file)) {
+						\Yii::$app->response->sendFile($file, $scannedDoc->scanName);
+				}
+		}
 
 
     public function actionClientadd(){
@@ -1594,12 +1625,12 @@ class ClientController extends AppController
 
         $section = $document->addSection();
         $document->addParagraphStyle('p2Style', array('textAlignment'=>'baseline', 'spaceAfter'=>0));
-        $section->addText('Акт выполненных работ № ____от «___» __________ 20___ г.', $titleStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500]);
+        $section->addText('Акт выполненных работ № ____ от ' . date('Y.m.d', strtotime($visit->DATE)), $titleStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500]);
 
         $document->addParagraphStyle('p2Style', array('align'=>'left', 'spaceAfter'=>0));
         $section->addText('     Исполнитель: ИП Зайцева Наталья Владимировна, ИНН 592006771808, ОГРНИП 308592021200018, 617760, Пермский край, г. Чайковский, ул. Ленина, д. 39,   кв. 72, тел. (34241) 42130, 89097269449', $textStyle, [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('     Заказчик:' . $fio . ', ' . $adres, $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
-        $section->addText('     Cоставили настоящий  акт об оказанных ветеринарных услугах к договору об оказании ветеринарных услуг   № __________ от «____» ____________20___ г.:', $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
+        $section->addText('     Cоставили настоящий  акт об оказанных ветеринарных услугах к договору об оказании ветеринарных услуг   № __________ от ' . date('Y.m.d', strtotime($visit->DATE)) . ':', $textStyle,[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
         $facilities=Facility::find()
             ->where(['facility.ID_CL' => $client->ID_CL])
@@ -2263,6 +2294,7 @@ class ClientController extends AppController
         $poroda=Poroda::findOne(['ID_POR'=>$pacient->ID_POR]);
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres=$client->STREET.' '.$client->HOUSE.'-'.$client->FLAT;
+        setcookie("docUslugiFontSize", $_GET['fontSize'], time()+99999999999);
 
         if($pacient->VOZR==''){
             $vozr='________';
@@ -2287,7 +2319,7 @@ class ClientController extends AppController
 
         $document=new PhpWord();
         $document->setDefaultFontName('Calibri');
-        $document->setDefaultFontSize(6);
+        $document->setDefaultFontSize(($_GET['fontSize'] >= 6) ? $_GET['fontSize'] : 6);
         $titleSection=$document->addSection(['marginTop' => '400', 'marginLeft'=>'600', 'marginRight'=>'600', 'marginBottom'=>'400', 'breakType'=>'continuous']);
         //$titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
         $cellHRight = array('align' => 'right', 'spaceAfter'=>100);
@@ -2494,7 +2526,7 @@ class ClientController extends AppController
         $cell->addText('Подпись: ________________________ ', null, $cellHCentered);
         $cell->addText('м.п. ', null, $cellHCentered);
 
-        $filename='/_Договор об оказании вет. услуг '.$pacient->KLICHKA.' ('.$fio.').docx';
+        $filename="/_Договор об оказании вет. услуг ".$pacient->KLICHKA.' ('.$fio.').docx';
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document, 'Word2007');
         $objWriter->save(Yii::getAlias('@analysis').$filename);
         $path = \Yii::getAlias('@analysis');

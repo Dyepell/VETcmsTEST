@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d4f6383b15a4cc8471aaaa45dadace2",
+    "content-hash": "8aa0e304365bb040605e679a5b8a36a5",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -1098,6 +1098,58 @@
             "time": "2020-11-14T18:14:52+00:00"
         },
         {
+            "name": "onmotion/yii2-widget-apexcharts",
+            "version": "v1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onmotion/yii2-widget-apexcharts.git",
+                "reference": "f1cf30bf5e3f6c10cbacb40b6210b2210d792690"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onmotion/yii2-widget-apexcharts/zipball/f1cf30bf5e3f6c10cbacb40b6210b2210d792690",
+                "reference": "f1cf30bf5e3f6c10cbacb40b6210b2210d792690",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0",
+                "yiisoft/yii2": ">=2.0.1"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "onmotion\\apexcharts\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandr Kozhevnikov",
+                    "email": "onmotion1@gmail.com",
+                    "homepage": "http://kozhevnikov.site",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Yii2 charts widget - wrapper for the ApexCharts.js",
+            "keywords": [
+                "apexcharts",
+                "chart",
+                "charts",
+                "diagram",
+                "extension",
+                "widget",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/onmotion/yii2-widget-apexcharts/issues",
+                "source": "https://github.com/onmotion/yii2-widget-apexcharts/tree/v1.0.8"
+            },
+            "time": "2023-02-13T13:54:47+00:00"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v9.99.100",
             "source": {
@@ -1463,6 +1515,55 @@
                 "source": "https://github.com/PHPOffice/PHPWord/tree/develop"
             },
             "time": "2019-10-01T20:43:33+00:00"
+        },
+        {
+            "name": "practically/yii2-chartjs",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Practically/yii2-chartjs.git",
+                "reference": "11d35b27200f193400e267d7bcc23f65b8097ff4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Practically/yii2-chartjs/zipball/11d35b27200f193400e267d7bcc23f65b8097ff4",
+                "reference": "11d35b27200f193400e267d7bcc23f65b8097ff4",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "^2.0"
+            },
+            "require-dev": {
+                "bower-asset/chart-js": "^2.7",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/phpunit-bridge": "^5.2",
+                "vimeo/psalm": "^4.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "practically\\chartjs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Ade Attwood",
+                    "email": "ade@practically.io",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Neil Davies",
+                    "email": "neil@practically.io",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "Chart js wrapper for yii2 to help with rendering data charts",
+            "support": {
+                "issues": "https://github.com/Practically/yii2-chartjs/issues",
+                "source": "https://github.com/Practically/yii2-chartjs/tree/v1.1.0"
+            },
+            "time": "2021-09-09T08:34:55+00:00"
         },
         {
             "name": "psr/http-client",

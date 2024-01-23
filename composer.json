@@ -26,7 +26,9 @@
         "yiisoft/yii2-httpclient": "*",
         "lepiaf/serialport": "^1.1",
         "degordian/yii2-webhooks": "dev-master",
-        "bubasuma/yii2-simplechat": "^2.0"
+        "bubasuma/yii2-simplechat": "^2.0",
+        "practically/yii2-chartjs": "^1.1",
+        "onmotion/yii2-widget-apexcharts": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
