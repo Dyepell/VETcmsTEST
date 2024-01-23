@@ -1644,7 +1644,6 @@ class ClientController extends AppController
                 'facility.DATA' => SORT_ASC,
             ])
             ->all();
-        $section->addText($client->ID_CL, ['size'=>20],[ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
         $styleTable = array('borderSize' => '1', 'borderColor' => '1');
         $cellHCentered = array('align' => 'both');
