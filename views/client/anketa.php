@@ -135,17 +135,18 @@ use yii\widgets\MaskedInput;
 </div>
 
 
-                    <div class="row">
+                    <div class="row docs">
                         <div class="col-md-3">
                             <a href="index.php?r=client/analysis&ID_PAC=<?=$model->ID_PAC?>" class="btn btn-primary">Исследования</a>
                         </div>
                         <div class="col-md-6">
                         </div>
                         <div class="col-md-6" style="text-align: right;">
-                            <a href="#" id = 'getDoc' class="btn my-btn-dropdown" style="border-bottom-left-radius: 10px; border-top-left-radius:10px; border-bottom-right-radius: 0px; border-top-right-radius:0px">Договор об оказании вет. услуг</a>
+                            <? \MyUtility\MyUtility::Dump($model->ID_PAC); ?>
+                            <a href="#" id = 'getDoc_<?=$model->ID_PAC?>' class="btn my-btn-dropdown getDoc" style="border-bottom-left-radius: 10px; border-top-left-radius:10px; border-bottom-right-radius: 0px; border-top-right-radius:0px">Договор об оказании вет. услуг</a>
                             <div class="my-dropdown">
                                 <a class="btn my-btn-dropdown" style="border-left:1px solid navy;border-bottom-left-radius: 0px; border-top-left-radius:0px; border-bottom-right-radius: 10px; border-top-right-radius:10px">
-                                    <i id = 'fontSize' class="fa mfa-caret-down"><?=($_COOKIE["docUslugiFontSize"] >= 6) ? $_COOKIE["docUslugiFontSize"] : 6?></i>
+                                    <i id = 'fontSize_<?=$model->ID_PAC?>' class="fa mfa-caret-down fontSize"><?=($_COOKIE["docUslugiFontSize"] >= 6) ? $_COOKIE["docUslugiFontSize"] : 6?></i>
                                 </a>
                                 <div class="my-dropdown-content">
                                     <a class = "fontSizeSelector" href="#">6</a>
@@ -251,11 +252,11 @@ if ($_GET['clientId']!='new'){?>
     if (isset($model->ID_PAC)) :
     $js = <<<JS
 $('.fontSizeSelector').on('click', function (){
-    $('#fontSize').text($(this).text());
+    $('.fontSize').text($(this).text());
 });
 
-$('#getDoc').on('click', function (){
-    window.location.href = "$app->basePath/web/index.php?r=client/docuslugi&ID_PAC=$model->ID_PAC&fontSize=" + $('#fontSize').text();
+$('.getDoc').on('click', function (){
+    window.location.href = "$app->basePath/web/index.php?r=client/docuslugi&ID_PAC=" + $(this).attr('id').match(/(\d+)/)[0] + "&fontSize=" + $(this).closest('.docs').find('.fontSize').text();
 });
 
 JS;
