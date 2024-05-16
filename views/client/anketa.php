@@ -142,12 +142,12 @@ use yii\widgets\MaskedInput;
                         <div class="col-md-6">
                         </div>
                         <div class="col-md-6" style="text-align: right;">
-                            <? \MyUtility\MyUtility::Dump($model->ID_PAC); ?>
-                            <a href="#" id = 'getDoc_<?=$model->ID_PAC?>' class="btn my-btn-dropdown getDoc" style="border-bottom-left-radius: 10px; border-top-left-radius:10px; border-bottom-right-radius: 0px; border-top-right-radius:0px">Договор об оказании вет. услуг</a>
+                            <a href="#" id = 'getDoc_<?=$model->ID_PAC?>' class="btn my-btn-dropdown getDoc" style="background-color: #cdddf7;border-bottom-left-radius: 10px; border-top-left-radius:10px; border-bottom-right-radius: 0px; border-top-right-radius:0px">Договор об оказании вет. услуг (старый)</a>
                             <div class="my-dropdown">
                                 <a class="btn my-btn-dropdown" style="border-left:1px solid navy;border-bottom-left-radius: 0px; border-top-left-radius:0px; border-bottom-right-radius: 10px; border-top-right-radius:10px">
                                     <i id = 'fontSize_<?=$model->ID_PAC?>' class="fa mfa-caret-down fontSize"><?=($_COOKIE["docUslugiFontSize"] >= 6) ? $_COOKIE["docUslugiFontSize"] : 6?></i>
                                 </a>
+
                                 <div class="my-dropdown-content">
                                     <a class = "fontSizeSelector" href="#">6</a>
                                     <a class = "fontSizeSelector" href="#">7</a>
@@ -160,9 +160,34 @@ use yii\widgets\MaskedInput;
                                     <a class = "fontSizeSelector" href="#">14</a>
                                 </div>
                             </div>
+
                         </div>
 
 
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-4">
+							<? $model->docUslugi->renderButton('Договор об оказании вет. услуг (новый)') ?>
+                        </div>
+                        <div class="col-md-4" style="margin-left: 10px;">
+                            <? $model->docRefuse->renderButton('Информационный отказ ') ?>
+                        </div>
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-4">
+                            <? $model->docSedation->renderButton('Cогласие на проведение седации') ?>
+                        </div>
+                        <div class="col-md-4" style="margin-left: 10px;">
+                            <? $model->docInter->renderButton('Согласие на вмешательство') ?>
+                        </div>
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-4">
+                            <? $model->docHospital->renderButton('Cогласие на стационар') ?>
+                        </div>
+                        <div class="col-md-4" style="margin-left: 10px;">
+                            <? $model->docCritical->renderButton('Инф. о тяжелом состоянии') ?>
+                        </div>
                     </div>
 
 

@@ -8,10 +8,27 @@ use yii\db\ActiveRecord;
 
 class Pacient extends ActiveRecord
 {
+		public $textFiller;
     public static function tableName()
     {
         return 'pacient';
     }
+
+    public  function attributeLabels()
+    {
+        return [
+            'ID_PAC'=>'ID ',
+            'KLICHKA'=>'Кличка',
+            'NAMEPOR'=>'Наименование породы',
+            'BDAY'=>'Дата рождения',
+            'VOZR'=>'Возраст',
+            'POL'=>'Пол',
+            'PRIMECH'=>'Примечание',
+            ''
+
+        ];
+    }
+
     public function getVid(){
         return $this->hasOne(Vid::className(), ['ID_VID' => 'ID_VID']);
     }

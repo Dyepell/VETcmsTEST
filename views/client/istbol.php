@@ -3,7 +3,9 @@
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use execut\autosizeTextarea\TextareaWidget;?>
+use execut\autosizeTextarea\TextareaWidget;
+use TextFiller\TextFiller;
+?>
 <script>
     $(function() {
         $("div[id*='menu-']").hide();
@@ -32,10 +34,30 @@ use execut\autosizeTextarea\TextareaWidget;?>
 </script>
 
 <div class="container-fluid row" style="margin-top: 70px;margin-bottom: 50px;">
+    <div class="row">
+        <div class="col-md-2">
+            <span style="font-size: 150%">История болезни: <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>" class="clientLink"><?=$pacient->KLICHKA?></a></span>
+        </div>
+        <?php if ($_GET['ID_IST']!=NULL):?>
+        <div class="col-md-6">
+            <? $textFiller->renderButton(); ?>
+        </div>
 
-    <span style="font-size: 150%">История болезни: <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>" class="clientLink"><?=$pacient->KLICHKA?></a></span>
-    <?php $form = ActiveForm::begin(['options'=>['id'=>'istbolForm']]) ?>
-    <?= $form->field($istbol, 'DIST')->textInput()->label('Дата')?>
+        <?php endif; ?>
+    </div>
+
+    <div>
+        <?php $form = ActiveForm::begin(['options'=>['id'=>'istbolForm']]) ?>
+        <?= $form->field($istbol, 'DIST')->textInput()->label('Дата')?>
+    </div>
+    <?php
+
+//    $input = \Yii::$app->basePath."/DocTemplates/test.docx";
+    //$input = 'Дата:23.10.21.          Владелец: $$client$$ Животное: кошка $$pacient$$ вес 3.500';
+//    $test = new TextFiller($input);
+//    $test->replace();
+
+    ?>
     <a href="#" style="width: 100%;text-align: left;margin-top: 10px" onclick="toggle('#menu-anamnez');" class="btn btn-default">Анамнез жизни</a>
     <div id="menu-anamnez" class="pacient-form" style="">
 

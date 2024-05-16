@@ -57,6 +57,7 @@ use app\models\Vid;
 use app\models\Vizit;
 use app\models\sl_vakc;
 use app\models\VizitForm;
+use TextFiller\TextFiller;
 use yii\base\BaseObject;
 use yii\data\ActiveDataProvider;
 use app\models\BiohimForm;
@@ -135,7 +136,21 @@ class ClientController extends AppController
         $clientId=$_GET['clientId'];
         $model = ClientForm::findOne(['ID_CL'=>$clientId]);
         $pacients=Pacient::find()->where(['ID_CL'=>$clientId])->all();
+
+
         $pacModel= PacientForm::find()->where(['ID_CL'=>$clientId])->with('vid')->with('poroda')->with('doctor')->all();
+				foreach ($pacModel as $pacient){
+				    $data = [
+				        'templateType' => 'docx',
+                        'id' => $pacient->ID_PAC
+                    ];
+				    $pacient->docUslugi = new TextFiller('docUslugi', $data);
+                    $pacient->docRefuse = new TextFiller('docRefuse', $data);
+                    $pacient->docSedation = new TextFiller('docSedation', $data);
+                    $pacient->docInter = new TextFiller('docInter', $data);
+                    $pacient->docHospital = new TextFiller('docHospital', $data);
+                    $pacient->docCritical = new TextFiller('docCritical', $data);
+				}
         $newPacient=new PacientForm();
         $this->view->title=$model->FAM.' '.$model->NAME;
 
@@ -455,11 +470,16 @@ class ClientController extends AppController
                 return $this->redirect("index.php?r=client/visit&ID_VISIT=".$ID_VISIT.'&ID_PAC='.$_GET['ID_PAC']);
             }
         }
+        $data = [
+            'templateType' => 'docx',
+            'id' => $pacient->ID_PAC
+        ];
+        $docDolg = new TextFiller('docDolg', $data);
 
         $this->view->title='Визит: '.$pacient->KLICHKA;
         return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider',
             'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc', 'goodsSalesProvider',
-            'model', 'salesProducts', 'doctors'));
+            'model', 'salesProducts', 'doctors', 'docDolg'));
     }
 
 
@@ -599,6 +619,11 @@ class ClientController extends AppController
         if ($_GET['ID_IST']!=NULL){
             $istbol = IstbolForm::findOne(['ID_IST'=>$_GET['ID_IST']]);
             $pacient = Pacient::findOne(['ID_PAC'=>$istbol->ID_PAC]);
+            $data = [
+                'templateType' => 'docx',
+                'id' => $_GET['ID_IST']
+            ];
+            $textFiller = new TextFiller('istBol', $data);
         }else{
             $istbol =new IstbolForm();
             $istbol->DIST=date("d.m.Y");
@@ -612,7 +637,9 @@ class ClientController extends AppController
             }
         }
 
-        return $this->render('istbol', compact('istbol', 'pacient'));
+
+
+        return $this->render('istbol', compact('istbol', 'pacient', 'textFiller'));
     }
 
 

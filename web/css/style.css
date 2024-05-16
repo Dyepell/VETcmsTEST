@@ -165,7 +165,7 @@
     background-color: #337ab7;
     color: white;
     padding: 10px;
-    font-size: 16px;
+    font-size: 14px;
     border: none;
     outline: none;
 }
@@ -203,4 +203,21 @@
 /* Изменяем фоновый цвет вызывающей кнопки при выводе выпадающего блока */
 .my-btn:hover, .my-dropdown:hover .btn  {
     background-color: #0b7dda;
+}
+
+.docButton .docDropdown {
+    background-color: #a5d7fa;
+    width: 1500%;
+    border-radius: 5px;
+    /*padding: 10px;*/
+}
+
+.docButton .docDropdown .hintValue {
+    text-align: right;
+}
+
+.docButton .docDropdown .hintRow {
+    padding-top: 10px;
+    border-bottom: solid;
+    border-width: 1px;
 }
