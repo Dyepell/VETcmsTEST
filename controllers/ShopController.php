@@ -6,6 +6,7 @@ use app\models\GoodsImportForm;
 use app\models\KattovForm;
 use app\models\Prihod_tovaraForm;
 use app\models\SaleChecksForm;
+use app\models\User;
 use MyUtility\MyUtility;
 use yii\data\ActiveDataProvider;
 use Yii;
@@ -20,6 +21,14 @@ class ShopController extends AppController
     public function beforeAction($action) {
         if ($action->id=='index'){
             $this->enableCsrfValidation=false;
+        }
+
+        $session = Yii::$app->session;
+
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
         }
         return parent::beforeAction($action);
     }

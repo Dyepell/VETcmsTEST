@@ -2,7 +2,7 @@
 
 
 namespace app\controllers;
-
+ini_set('display_errors', 1);
 use app\models\Analys_blood;
 use app\models\AnalysbloodForm;
 use app\models\Anamnez_lifeForm;
@@ -38,6 +38,7 @@ use app\models\Price;
 use app\models\Biohim;
 use app\models\Mocha;
 use app\models\MochaForm;
+use app\models\User;
 use app\models\Uzi;
 use app\models\UziForm;
 use app\models\Other_isl;
@@ -66,6 +67,7 @@ use Yii;
 use app\models\BrandImagesForm;
 use bubasuma\simplechat\controllers\ControllerTrait;
 use MercuryAPI\MercuryWrapper;
+use yii\filters\AccessControl;
 
 
 class ClientController extends AppController
@@ -75,13 +77,46 @@ class ClientController extends AppController
 
     public function beforeAction($action)
     {
-    //     if ($action->id=='index'){
-    //         $this->enableCsrfValidation=false;
-    //     }
+         if ($action->id=='index'){
+             $this->enableCsrfValidation=false;
+//             $this->enableCookieValidation = false;
+         }
+
+        $session = Yii::$app->session;
+
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
+        }
+
 
     return parent::beforeAction($action);
     }
 
+
+
+//		public function behaviors()
+//		{
+//				return [
+//						'access'    =>  [
+//								'class' =>  AccessControl::className(),
+//								'denyCallback'  =>  function($rule, $action)
+//								{
+//										throw new \yii\web\NotFoundHttpException();
+//								},
+//								'rules' =>  [
+//										[
+//												'allow' =>  true,
+//												'matchCallback' =>  function($rule, $action)
+//												{
+//														return Yii::$app->user->identity->isAdmin;
+//												}
+//										]
+//								]
+//						]
+//				];
+//		}
 
     public function actionIndex(){
         $model = new SearchForm();
@@ -329,6 +364,7 @@ class ClientController extends AppController
             $visit=VizitForm::findOne(['ID_VISIT'=>$_GET['ID_VISIT']]);
             $pacient=Pacient::findOne(['ID_PAC'=>$visit->ID_PAC]);
             $doctors=Doctor::find()->all();
+//            $docDolg = new TextFiller('docDolg', $data);
             $doc=[];
             $uslugi=Facility::find()->where(['ID_VISIT'=>$_GET['ID_VISIT']])->all();
 
@@ -474,7 +510,7 @@ class ClientController extends AppController
             'templateType' => 'docx',
             'id' => $pacient->ID_PAC
         ];
-        $docDolg = new TextFiller('docDolg', $data);
+
 
         $this->view->title='Визит: '.$pacient->KLICHKA;
         return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider',

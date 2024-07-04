@@ -14,6 +14,7 @@ use app\models\Prihod_tovara;
 use app\models\Sale;
 use app\models\sl_vakc;
 use app\models\Spdoc;
+use app\models\User;
 use app\models\Vid;
 use app\models\Vizit;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -81,6 +82,14 @@ class ReportsController extends AppController
     {
         if ($action->id=='index'){
             $this->enableCsrfValidation=false;
+        }
+
+        $session = Yii::$app->session;
+
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
         }
         return parent::beforeAction($action);
     }

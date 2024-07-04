@@ -166,26 +166,26 @@ use yii\widgets\MaskedInput;
 
                     </div>
                     <div class="row docs">
-                        <div class="col-md-4">
-							<? $model->docUslugi->renderButton('Договор об оказании вет. услуг (новый)') ?>
+                        <div class="col-md-5">
+							<? $model->docUslugi->renderButton('Договор об оказании вет. услуг') ?>
                         </div>
-                        <div class="col-md-4" style="margin-left: 10px;">
+                        <div class="col-md-6" style="margin-left: 10px;">
                             <? $model->docRefuse->renderButton('Информационный отказ ') ?>
                         </div>
                     </div>
                     <div class="row docs">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <? $model->docSedation->renderButton('Cогласие на проведение седации') ?>
                         </div>
-                        <div class="col-md-4" style="margin-left: 10px;">
+                        <div class="col-md-6" style="margin-left: 10px;">
                             <? $model->docInter->renderButton('Согласие на вмешательство') ?>
                         </div>
                     </div>
                     <div class="row docs">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <? $model->docHospital->renderButton('Cогласие на стационар') ?>
                         </div>
-                        <div class="col-md-4" style="margin-left: 10px;">
+                        <div class="col-md-6" style="margin-left: 10px;">
                             <? $model->docCritical->renderButton('Инф. о тяжелом состоянии') ?>
                         </div>
                     </div>

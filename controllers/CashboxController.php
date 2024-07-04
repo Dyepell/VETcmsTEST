@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\models\ClinicForm;
+use app\models\User;
 use MercuryAPI\MercuryWrapper;
 
 
@@ -14,7 +15,13 @@ class CashboxController extends AppController
         if ($action->id=='index'){
             $this->enableCsrfValidation=false;
         }
+        $session = Yii::$app->session;
 
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
+        }
         return parent::beforeAction($action);
     }
 

@@ -5,6 +5,7 @@ namespace app\controllers;
 
 use app\models\Old_postup;
 use app\models\Prihod_tovara;
+use app\models\User;
 use Yii;
 use app\models\Sl_vakc;
 use app\models\Facility;
@@ -17,6 +18,14 @@ class MigrationController extends AppController
     {
         if ($action->id == 'index') {
             $this->enableCsrfValidation = false;
+        }
+
+        $session = Yii::$app->session;
+
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
         }
         return parent::beforeAction($action);
     }

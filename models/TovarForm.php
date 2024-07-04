@@ -18,9 +18,6 @@ class TovarForm extends ActiveRecord
             'ID_TOV'=>'ID',
             'NAME'=>'Наименование',
             'KOL'=>'Количество',
-
-
-
         ];
     }
     public function rules()

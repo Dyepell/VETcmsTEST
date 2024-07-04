@@ -105,8 +105,10 @@ $clinic = ClinicForm::findOne(['id' => 1]);
                 'items' => [
                     ['label' => 'Данные клиники', 'url' => ['/clinic/clinicpage']],
                     ['label' => 'Шаблоны документов', 'url' => ['/docs/templatepage']],
+                    ['label' => 'Выйти (' . Yii::$app->request->cookies->getValue('login') . ')', 'url' => ['/auth/logout']]
                 ]
             ]
+
     ]]);
     NavBar::end();
     ?>

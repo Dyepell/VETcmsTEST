@@ -3,6 +3,7 @@ namespace app\controllers;
 
 use app\models\BrandImagesForm;
 use app\models\ClientForm;
+use app\models\User;
 use Yii;
 use app\models\Clinic;
 use app\models\ClinicForm;
@@ -20,6 +21,14 @@ class ClinicController extends AppController
     public function beforeAction($action) {
         if ($action->id=='index'){
             $this->enableCsrfValidation=false;
+        }
+
+        $session = Yii::$app->session;
+
+        if ($session->get('authToken') === NULL) {
+            $this->redirect("index.php?r=auth/login");
+        } else if (User::findByToken($session->get('authToken')) == NULL) {
+            $this->redirect("index.php?r=auth/logout");
         }
         return parent::beforeAction($action);
     }

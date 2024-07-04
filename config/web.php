@@ -8,7 +8,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'webhooks', 'simplechat'],
     'language'=>'ru',
-    'homeUrl' => 'public_html/web/index.php?r=client',
+    'homeUrl' => '/web/index.php?r=client',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -28,6 +28,8 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => '/web/index.php?r=auth/login',
+						'identityCookie' => ['name' =>'_identity-frontend']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -56,6 +58,8 @@ $config = [
             'rules' => [
             ],
         ],
+
+
 
     ],
     'modules' => [
