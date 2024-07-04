@@ -158,3 +158,66 @@
 .my-content {
     background-color: #e6ffff;
 }
+
+
+/* Вызывающая кнопка */
+.my-btn-dropdown {
+    background-color: #337ab7;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    outline: none;
+}
+
+/* Контейнер <div> - нужен для позиционирования выпадающего контента */
+.my-dropdown {
+    position: absolute;
+    display: inline-block;
+}
+
+/* Выпадающий контент (по умолчанию скрыт) */
+.my-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    z-index: 1;
+}
+
+/* Ссылки внутри выпадающего блока */
+.my-dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Изменяем цвет ссылки при наведении */
+.my-dropdown-content a:hover {background-color: #ddd}
+
+/* Показываем выпадающий блок при наведении */
+.my-dropdown:hover .my-dropdown-content {
+    display: block;
+}
+
+/* Изменяем фоновый цвет вызывающей кнопки при выводе выпадающего блока */
+.my-btn:hover, .my-dropdown:hover .btn  {
+    background-color: #0b7dda;
+}
+
+.docButton .docDropdown {
+    background-color: #a5d7fa;
+    width: 1500%;
+    border-radius: 5px;
+    /*padding: 10px;*/
+}
+
+.docButton .docDropdown .hintValue {
+    text-align: right;
+}
+
+.docButton .docDropdown .hintRow {
+    padding-top: 10px;
+    border-bottom: solid;
+    border-width: 1px;
+}

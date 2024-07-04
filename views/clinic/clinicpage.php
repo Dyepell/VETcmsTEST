@@ -5,7 +5,7 @@ use yii\grid\GridView;
 
 ?>
 <div class="container-fluid row" style="margin-top: 70px;margin-bottom: 50px;">
-    <h3><?=$clinic->clinicName?></h3>
+    <h3><?=$clinic->clinicName?> <a href="index.php?r=clinic/clinicstats&year=<?=date('Y')?>" class="btn btn-success">Статистика</a></h3>
     <div class="col-lg-6 clinic-col">
         <h4>Основные данные</h4>
         <?php $form = ActiveForm::begin(['options'=>['id'=>'clinicForm']]) ?>

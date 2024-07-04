@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=dyepell_vetcms',
+    'dsn' => 'mysql:host=localhost;dbname=vetadminDev',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',

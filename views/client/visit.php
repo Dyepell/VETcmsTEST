@@ -120,10 +120,12 @@ $('#visitForm').on('beforeSubmit', function()
                 <h4 class="modal-title" id="myModalLabel">Приложения</h4>
             </div>
             <div class="modal-body" style="text-align: center">
-
-                <a href="index.php?r=client/docagree&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success" style="margin-bottom: 10px;">Соглашение</a>
-                <a href="index.php?r=client/docdolg&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success" style="margin-bottom: 10px;">Договор возмездного оказания</a>
-                <a href="index.php?r=client/docact&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success">Акт выполненных работ</a>
+                <a href="index.php?r=client/docagree&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success" style="margin-bottom: 10px;">Соглашение (старое)</a>
+                <a href="index.php?r=client/docdolg&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success" style="margin-bottom: 10px;">Договор возмездного оказания (старый)</a>
+                <a href="index.php?r=client/docact&ID_VISIT=<?=$visit->ID_VISIT?>" class="btn btn-success">Акт выполненных работ (старый)</a>
+<!--                --><?// if ($_GET['ID_VISIT']!=null) :?>
+<!--                --><?// $docDolg->renderButton('Договор возмездного оказания') ?>
+<!--                --><?// endif;?>
             </div>
             <div class="modal-footer">
                 <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->

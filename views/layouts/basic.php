@@ -101,7 +101,14 @@ $clinic = ClinicForm::findOne(['id' => 1]);
                     ['label' => 'Касса', 'url' => ['/cashbox/cashboxpage']],
                 ],
             ],
-            ['label' => 'Клиника', 'url' => ['/clinic/clinicpage']]
+            ['label' => 'Клиника',
+                'items' => [
+                    ['label' => 'Данные клиники', 'url' => ['/clinic/clinicpage']],
+                    ['label' => 'Шаблоны документов', 'url' => ['/docs/templatepage']],
+                    ['label' => 'Выйти (' . Yii::$app->request->cookies->getValue('login') . ')', 'url' => ['/auth/logout']]
+                ]
+            ]
+
     ]]);
     NavBar::end();
     ?>

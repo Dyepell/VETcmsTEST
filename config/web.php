@@ -28,6 +28,8 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => '/web/index.php?r=auth/login',
+						'identityCookie' => ['name' =>'_identity-frontend']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -56,7 +58,6 @@ $config = [
             'rules' => [
             ],
         ],
-
     ],
     'modules' => [
         'webhooks' => [

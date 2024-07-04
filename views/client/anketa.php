@@ -2,6 +2,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use yii\grid\GridView;
 use yii\widgets\MaskedInput;
 ?>
 
@@ -26,10 +27,45 @@ use yii\widgets\MaskedInput;
     <?= $form->field($model, 'PHONED')->textInput(['style'=>'width: 210px;', 'autocomplete'=>'0'])?>
     <?= $form->field($model, 'PHONES')->textInput(['style'=>'width: 210px;margin-left:5px', 'autocomplete'=>'0'])?>
 </div>
-<?= $form->field($model, 'EMAIL')->textInput(['autocomplete'=>'0'])?>
+<?= $form->field($model, 'EMAIL')->textInput(['autocomplete'=>'0', 'style' =>'background-color: #ffa3a3'])?>
+  <?= $form->field($model, 'document')->fileInput(['autocomplete'=>"off"])?>
 <?= Html::submitButton('Сохранить',['class'=>'btn btn-success'])?>
 <?php $form = ActiveForm::end();
 ?>
+
+		<?php  if ($scannedDocs != NULL){
+		    echo "<h4>Отсканированные документы</h4>";
+				echo GridView::widget([
+					'dataProvider' => $scannedDocs,
+					'columns'=>[
+						['class' => 'yii\grid\ActionColumn',
+							'template'=>'{view} {delete}',
+							'buttons'=>['view'=>function($model, $key, $index){
+									$myurl="index.php?r=client/scanneddocownload&scanId=".$key['scanId'];
+
+									return Html::a('<span class="glyphicon glyphicon-download"></span>', $myurl,[
+										'title' => Yii::t('app', 'Просмотр'),
+									]);
+							},
+								'delete'=>function($model, $key, $index){
+
+										$myurl="index.php?r=client/scanneddocdelete&scanId=".$key['scanId'];
+
+										return Html::a('<span class="glyphicon glyphicon-trash" style="margin-left: 5px;" onclick=\'return confirm("Вы уверены?")\'></span>', $myurl,[
+											'title' => Yii::t('app', 'Удалить'),
+										]);
+								}
+							],
+
+						],
+						'scanId',
+						'scanName'
+					]
+				]);
+		}
+		?>
+
+
 
 </div>
     <script>
@@ -99,16 +135,59 @@ use yii\widgets\MaskedInput;
 </div>
 
 
-                    <div class="row">
+                    <div class="row docs">
                         <div class="col-md-3">
                             <a href="index.php?r=client/analysis&ID_PAC=<?=$model->ID_PAC?>" class="btn btn-primary">Исследования</a>
                         </div>
                         <div class="col-md-6">
                         </div>
-                        <div class="col-md-3" style="text-align: right;">
-                            <a href="index.php?r=client/docuslugi&ID_PAC=<?=$model->ID_PAC?>" style="margin-left: -110px;" class="btn btn-primary">Договор об оказании вет. услуг</a>
+                        <div class="col-md-6" style="text-align: right;">
+                            <a href="#" id = 'getDoc_<?=$model->ID_PAC?>' class="btn my-btn-dropdown getDoc" style="background-color: #cdddf7;border-bottom-left-radius: 10px; border-top-left-radius:10px; border-bottom-right-radius: 0px; border-top-right-radius:0px">Договор об оказании вет. услуг (старый)</a>
+                            <div class="my-dropdown">
+                                <a class="btn my-btn-dropdown" style="border-left:1px solid navy;border-bottom-left-radius: 0px; border-top-left-radius:0px; border-bottom-right-radius: 10px; border-top-right-radius:10px">
+                                    <i id = 'fontSize_<?=$model->ID_PAC?>' class="fa mfa-caret-down fontSize"><?=($_COOKIE["docUslugiFontSize"] >= 6) ? $_COOKIE["docUslugiFontSize"] : 6?></i>
+                                </a>
+
+                                <div class="my-dropdown-content">
+                                    <a class = "fontSizeSelector" href="#">6</a>
+                                    <a class = "fontSizeSelector" href="#">7</a>
+                                    <a class = "fontSizeSelector" href="#">8</a>
+                                    <a class = "fontSizeSelector" href="#">9</a>
+                                    <a class = "fontSizeSelector" href="#">10</a>
+                                    <a class = "fontSizeSelector" href="#">11</a>
+                                    <a class = "fontSizeSelector" href="#">12</a>
+                                    <a class = "fontSizeSelector" href="#">13</a>
+                                    <a class = "fontSizeSelector" href="#">14</a>
+                                </div>
+                            </div>
+
                         </div>
 
+
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-5">
+							<? $model->docUslugi->renderButton('Договор об оказании вет. услуг') ?>
+                        </div>
+                        <div class="col-md-6" style="margin-left: 10px;">
+                            <? $model->docRefuse->renderButton('Информационный отказ ') ?>
+                        </div>
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-5">
+                            <? $model->docSedation->renderButton('Cогласие на проведение седации') ?>
+                        </div>
+                        <div class="col-md-6" style="margin-left: 10px;">
+                            <? $model->docInter->renderButton('Согласие на вмешательство') ?>
+                        </div>
+                    </div>
+                    <div class="row docs">
+                        <div class="col-md-5">
+                            <? $model->docHospital->renderButton('Cогласие на стационар') ?>
+                        </div>
+                        <div class="col-md-6" style="margin-left: 10px;">
+                            <? $model->docCritical->renderButton('Инф. о тяжелом состоянии') ?>
+                        </div>
                     </div>
 
 
@@ -192,5 +271,21 @@ if ($_GET['clientId']!='new'){?>
         </div>
 
     </div>
+
     <?php }?>
+    <?php
+    if (isset($model->ID_PAC)) :
+    $js = <<<JS
+$('.fontSizeSelector').on('click', function (){
+    $('.fontSize').text($(this).text());
+});
+
+$('.getDoc').on('click', function (){
+    window.location.href = "$app->basePath/web/index.php?r=client/docuslugi&ID_PAC=" + $(this).attr('id').match(/(\d+)/)[0] + "&fontSize=" + $(this).closest('.docs').find('.fontSize').text();
+});
+
+JS;
+    endif;
+
+    $this->registerJs($js);?>
 

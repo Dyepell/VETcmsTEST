@@ -11,4 +11,20 @@ class Vid extends  ActiveRecord
     {
         return 'vid';
     }
+
+    public  function attributeLabels()
+    {
+        return [
+            'ID_VID'=>'ID вида',
+            'NAMEVID' => 'Наименование вида',
+
+        ];
+
+    }
+    public function rules()
+    {
+        return [
+            [['ID_VID', "NAMEVID"], 'safe'],
+        ];
+    }
 }
