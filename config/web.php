@@ -8,7 +8,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'webhooks', 'simplechat'],
     'language'=>'ru',
-    'homeUrl' => '/web/index.php?r=client',
+    'homeUrl' => 'public_html/web/index.php?r=client',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -58,9 +58,6 @@ $config = [
             'rules' => [
             ],
         ],
-
-
-
     ],
     'modules' => [
         'webhooks' => [

@@ -70,6 +70,7 @@ use MercuryAPI\MercuryWrapper;
 use yii\filters\AccessControl;
 
 
+
 class ClientController extends AppController
 {
     public $layout='basic';
@@ -516,6 +517,7 @@ class ClientController extends AppController
         return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider',
             'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc', 'goodsSalesProvider',
             'model', 'salesProducts', 'doctors', 'docDolg'));
+
     }
 
 
@@ -2383,6 +2385,7 @@ class ClientController extends AppController
         $document=new PhpWord();
         $document->setDefaultFontName('Calibri');
         $document->setDefaultFontSize(($_GET['fontSize'] >= 6) ? $_GET['fontSize'] : 6);
+
         $titleSection=$document->addSection(['marginTop' => '400', 'marginLeft'=>'600', 'marginRight'=>'600', 'marginBottom'=>'400', 'breakType'=>'continuous']);
         //$titleSection->addImage(\Yii::getAlias('@webroot')."/images/Brand images/$docImage->imagePath", $vizitkaStyle);
         $cellHRight = array('align' => 'right', 'spaceAfter'=>100);

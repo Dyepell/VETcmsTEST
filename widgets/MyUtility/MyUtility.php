@@ -32,6 +32,7 @@ class MyUtility
         return $data;
     }
 
+
 		public static function cleanDir($dir) {
 				$files = glob($dir."/*");
 				$c = count($files);
