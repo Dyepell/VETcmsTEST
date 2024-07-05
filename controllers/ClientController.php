@@ -120,6 +120,11 @@ class ClientController extends AppController
 
     public function actionIndex(){
         $model = new SearchForm();
+
+        MyUtility::Dump('');
+        MyUtility::Dump('');
+        MyUtility::Dump('');
+        MyUtility::Dump(scandir( Yii::$app->basePath.'/../ScannedDocs'));
         if(Yii::$app->request->isPjax){
 
             $test = $_POST[SearchForm];
