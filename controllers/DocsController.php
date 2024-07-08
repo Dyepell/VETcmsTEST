@@ -10,6 +10,7 @@ use Yii;
 use app\models\DocTemplateForm;
 use app\models\IstbolForm;
 use TextFiller\TextFiller;
+use yii\base\BaseObject;
 use yii\data\ActiveDataProvider;
 
 class DocsController extends AppController
@@ -98,6 +99,14 @@ class DocsController extends AppController
 				}
 				return $this->render('doctemplateform', compact('docTemplate', 'textFiller'));
 		}
+
+        public function actionTemplatedownload() {
+            $file = Yii::getAlias('@commonFolders/DocTemplates/') . $_GET['path'];
+
+            if (file_exists($file)) {
+                \Yii::$app->response->sendFile($file, $_GET['templateName']);
+            }
+        }
 
 		public function actionDoctemplateformdelete() {
 				$DocTemplateForm = DocTemplateForm::findOne(['docTemplateId'=>$_GET['docTemplateId']]);
