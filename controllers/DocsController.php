@@ -105,7 +105,7 @@ class DocsController extends AppController
 
             if (file_exists($file)) {
                 MyUtility::Dump($file);
-                \Yii::$app->response->sendFile($file, 'test.docx');
+                \Yii::$app->response->sendFile($file, 'test');
             }
         }
 
