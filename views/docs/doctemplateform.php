@@ -51,7 +51,6 @@ use execut\autosizeTextarea\TextareaWidget;
         <?if ($docTemplate->docTemplateId <> ''):?>
         <div class="col-md-6 clinic-col">
             <h3>Пример документа</h3>  <? $textFiller->renderButton(); ?>
-            <h3>Пустой шаблон: <a href="/DocTemplates/<?=$docTemplate->filePath?>" download><?=$docTemplate->filePath ?></a></h3>
             <h3>Пустой шаблон: <a href="index.php?r=docs/templatedownload&path=<?=$docTemplate->filePath?>&templateName= <?=$docTemplate->templateName?>"> <?=$docTemplate->templateName?> (скачать)</a></h3>
 
 		</div>
