@@ -44,11 +44,11 @@ class DocTemplateForm extends ActiveRecord
 		public function Upload() {
 				if($this->validate()){
 						if (UploadedFile::getInstance($this, 'file') != null) {
-								unlink(__DIR__ . "/../DocTemplates/".$this->getOldAttribute('imagePath'));
+								unlink(Yii::getAlias('@commonFolders/DocTemplates/').$this->getOldAttribute('imagePath'));
 								$this->file = UploadedFile::getInstance($this, 'file');
 								$this->filePath = MyUtility::UniqidReal() . '.' . $this->file->extension;
 								$this->setAttribute('filePath', $this->filePath);
-								$this->file->saveAs(__DIR__ . "/../DocTemplates/" . $this->filePath);
+								$this->file->saveAs(Yii::getAlias('@commonFolders/DocTemplates/'). $this->filePath);
 						}
 						$this->save(false);
 						return true;
@@ -58,7 +58,7 @@ class DocTemplateForm extends ActiveRecord
 		}
 
 		public function DeleteFile() {
-				unlink(__DIR__ . "/../DocTemplates/".$this->getAttribute('filePath'));
+				unlink(Yii::getAlias('@commonFolders/DocTemplates/').$this->getAttribute('filePath'));
 				$this->delete();
 				return true;
 		}

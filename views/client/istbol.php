@@ -52,11 +52,6 @@ use TextFiller\TextFiller;
     </div>
     <?php
 
-//    $input = \Yii::$app->basePath."/DocTemplates/test.docx";
-    //$input = 'Дата:23.10.21.          Владелец: $$client$$ Животное: кошка $$pacient$$ вес 3.500';
-//    $test = new TextFiller($input);
-//    $test->replace();
-
     ?>
     <a href="#" style="width: 100%;text-align: left;margin-top: 10px" onclick="toggle('#menu-anamnez');" class="btn btn-default">Анамнез жизни</a>
     <div id="menu-anamnez" class="pacient-form" style="">
