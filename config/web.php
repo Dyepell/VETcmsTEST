@@ -12,7 +12,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        '@commonFolders' => dirname(__DIR__).'\..\common_folders'
+        '@commonFolders' => dirname(__DIR__).'/../common_folders'
     ],
     'components' => [
         'formatter' => [
