@@ -104,6 +104,8 @@ class DocsController extends AppController
             $file = Yii::getAlias('@commonFolders/DocTemplates/') . $_GET['path'];
 
             if (file_exists($file)) {
+                MyUtility::Dump($file);
+                die;
                 \Yii::$app->response->sendFile($file, $_GET['templateName']);
             }
         }
