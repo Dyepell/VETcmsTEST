@@ -40,7 +40,7 @@ class TextFiller
 
         $this->prepareData($data);
 
-        if ($data['templateType'] == 'docx' && file_exists(\Yii::$app->basePath."/DocTemplates/".$this->templatePath)) {
+        if ($data['templateType'] == 'docx' && file_exists(\Yii::getAlias('@commonFolders/DocTemplates/').$this->templatePath)) {
             $this->replacer = new DocxReplacer();
         } else {
             $this->replacer = new SimpleTextReplacer();
