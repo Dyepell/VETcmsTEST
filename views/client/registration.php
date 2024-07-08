@@ -6,20 +6,14 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
-
-
-
-
-
+use MyUtility\MyUtility;
 
 ?>
 
 
 <div class="container-fluid col-md-7 p-0 clientPagination" style="height:">
 
-
 <?php Pjax::begin();
-
 if ($answer==NULL){
     if ($_GET['FAM']!=''){
     $answer=$_GET['FAM'];
@@ -40,7 +34,6 @@ $form = ActiveForm::begin(['options'=>['id'=>'searchForm','data-pjax' => true,]]
         <?php  if ($searchProvider!=NULL){
             echo GridView::widget([
                 'dataProvider' => $searchProvider,
-
 
                 'columns'=>[
                     ['class' => 'yii\grid\ActionColumn',

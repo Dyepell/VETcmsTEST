@@ -53,7 +53,7 @@ class ClientForm extends ActiveRecord
       if (UploadedFile::getInstance($this, 'document') != null) {
         $this->document = UploadedFile::getInstance($this, 'document');
         $this->documentPath = MyUtility::UniqidReal() . '.' . $this->document->extension;
-        $this->document->saveAs(__DIR__ . "/../ScannedDocs/" . $this->documentPath);
+        $this->document->saveAs(\Yii::getAlias('@commonFolders/ScannedDocs/') . $this->documentPath);
         $scanDoc = new ScannedDocForm();
         $scanDoc->clientId = $this->ID_CL;
         $scanDoc->scanPath = $this->documentPath;

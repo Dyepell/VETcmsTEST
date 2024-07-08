@@ -2,7 +2,6 @@
 
 
 namespace app\controllers;
-ini_set('display_errors', 1);
 use app\models\Analys_blood;
 use app\models\AnalysbloodForm;
 use app\models\Anamnez_lifeForm;
@@ -77,10 +76,10 @@ class ClientController extends AppController
 
     public function beforeAction($action)
     {
-         if ($action->id=='index'){
-             $this->enableCsrfValidation=false;
+        if ($action->id=='index'){
+            $this->enableCsrfValidation=false;
 //             $this->enableCookieValidation = false;
-         }
+        }
 
         $session = Yii::$app->session;
 
@@ -91,7 +90,7 @@ class ClientController extends AppController
         }
 
 
-    return parent::beforeAction($action);
+        return parent::beforeAction($action);
     }
 
 
@@ -120,11 +119,6 @@ class ClientController extends AppController
 
     public function actionIndex(){
         $model = new SearchForm();
-
-        MyUtility::Dump('');
-        MyUtility::Dump('');
-        MyUtility::Dump('');
-        MyUtility::Dump(scandir( Yii::$app->basePath.'/../ScannedDocs'));
         if(Yii::$app->request->isPjax){
 
             $test = $_POST[SearchForm];
@@ -138,7 +132,7 @@ class ClientController extends AppController
                     'pagination'=>false,
                     'sort'=> ['defaultOrder' => ['NAME' => SORT_ASC]],
                 ]);
-                }
+            }
 
             $model->load(Yii::$app->request->post());
             return $this->render('registration', compact('model', 'answer',  'searchProvider'));
@@ -179,24 +173,24 @@ class ClientController extends AppController
 
 
         $pacModel= PacientForm::find()->where(['ID_CL'=>$clientId])->with('vid')->with('poroda')->with('doctor')->all();
-				foreach ($pacModel as $pacient){
-				    $data = [
-				        'templateType' => 'docx',
-                        'id' => $pacient->ID_PAC
-                    ];
-				    $pacient->docUslugi = new TextFiller('docUslugi', $data);
-                    $pacient->docRefuse = new TextFiller('docRefuse', $data);
-                    $pacient->docSedation = new TextFiller('docSedation', $data);
-                    $pacient->docInter = new TextFiller('docInter', $data);
-                    $pacient->docHospital = new TextFiller('docHospital', $data);
-                    $pacient->docCritical = new TextFiller('docCritical', $data);
-				}
+        foreach ($pacModel as $pacient){
+            $data = [
+                'templateType' => 'docx',
+                'id' => $pacient->ID_PAC
+            ];
+            $pacient->docUslugi = new TextFiller('docUslugi', $data);
+            $pacient->docRefuse = new TextFiller('docRefuse', $data);
+            $pacient->docSedation = new TextFiller('docSedation', $data);
+            $pacient->docInter = new TextFiller('docInter', $data);
+            $pacient->docHospital = new TextFiller('docHospital', $data);
+            $pacient->docCritical = new TextFiller('docCritical', $data);
+        }
         $newPacient=new PacientForm();
         $this->view->title=$model->FAM.' '.$model->NAME;
 
         if ( $model->load(Yii::$app->request->post()) ){
             if ($model->document <> '') {
-              var_dump('test');
+                var_dump('test');
 
             }
             if ($model->save()){
@@ -230,33 +224,32 @@ class ClientController extends AppController
             $this->refresh();
         }
 
-		    $scannedDocs = new ActiveDataProvider([
-			    'query' => ScannedDocForm::find()->where(['clientId' => $clientId]),
-			    'pagination' => [
-				    'pageSize' => 10,
+        $scannedDocs = new ActiveDataProvider([
+            'query' => ScannedDocForm::find()->where(['clientId' => $clientId]),
+            'pagination' => [
+                'pageSize' => 10,
 
-			    ],
-		    ]);
+            ],
+        ]);
 
 
         return $this->render('anketa', compact('clientId', 'model', 'pacients', 'pacModel', 'newPacient', 'scannedDocs'));
     }
 
-		public function actionScanneddocdelete() {
-				$scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
-				$scannedDoc->DeleteDoc();
-				$this->redirect("index.php?r=client/anketa&clientId=$scannedDoc->clientId");
-		}
+    public function actionScanneddocdelete() {
+        $scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
+        $scannedDoc->DeleteDoc();
+        $this->redirect("index.php?r=client/anketa&clientId=$scannedDoc->clientId");
+    }
 
-		public function actionScanneddocownload() {
-				$scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
+    public function actionScanneddocownload() {
+        $scannedDoc = ScannedDocForm::findOne(['scanId'=>$_GET['scanId']]);
+        $file = Yii::getAlias('@commonFolders/ScannedDocs/') .$scannedDoc->scanPath;
 
-				$file = __DIR__ . "/../ScannedDocs/" .$scannedDoc->scanPath;
-
-				if (file_exists($file)) {
-						\Yii::$app->response->sendFile($file, $scannedDoc->scanName);
-				}
-		}
+        if (file_exists($file)) {
+            \Yii::$app->response->sendFile($file, $scannedDoc->scanName);
+        }
+    }
 
 
     public function actionClientadd(){
@@ -332,35 +325,35 @@ class ClientController extends AppController
     }
 
     public function actionVisits(){
-       $pacientId=$_GET['pacientId'];
-       $clientId=$_GET['clientId'];
+        $pacientId=$_GET['pacientId'];
+        $clientId=$_GET['clientId'];
 
-       $dataProvider = new ActiveDataProvider([
-           'query' => Vizit::find()->where(['ID_PAC'=>$pacientId])->with('diagnoz'),
-           'pagination'=>[
-               'pageSize'=>10,
-           ],
-       ]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Vizit::find()->where(['ID_PAC'=>$pacientId])->with('diagnoz'),
+            'pagination'=>[
+                'pageSize'=>10,
+            ],
+        ]);
 
-       $istbolProvider = new ActiveDataProvider([
+        $istbolProvider = new ActiveDataProvider([
             'query' => Istbol::find()->where(['ID_PAC'=>$pacientId]),
             'pagination' => false,
-       ]);
+        ]);
 
-       if(!Yii::$app->request->get('page')){
-           $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
-       }
+        if(!Yii::$app->request->get('page')){
+            $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
+        }
 
-       $vakcineProvider = new ActiveDataProvider([
-           'query' => Sl_vakc::find()->where(['ID_PAC'=>$pacientId])->orderBy(['ID_SLV'=>SORT_ASC]),
-           'pagination' => false,
-       ]);
+        $vakcineProvider = new ActiveDataProvider([
+            'query' => Sl_vakc::find()->where(['ID_PAC'=>$pacientId])->orderBy(['ID_SLV'=>SORT_ASC]),
+            'pagination' => false,
+        ]);
 
-       $pacient=Pacient::findOne(['ID_PAC'=>$pacientId]);
-       $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
-       $this->view->title='Визиты: '.$pacient->KLICHKA;
+        $pacient=Pacient::findOne(['ID_PAC'=>$pacientId]);
+        $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
+        $this->view->title='Визиты: '.$pacient->KLICHKA;
 
-       return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider'));
+        return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider'));
     }
 
 
@@ -576,7 +569,7 @@ class ClientController extends AppController
 
         return $this->render('price', compact('teraphyProvider', 'surgaryProvider',
             'uziProvider', 'medicinesProvider', 'vakcineProvider', 'degProvider','analysisProvider',
-        'feedProvider'));
+            'feedProvider'));
     }
 
 
@@ -649,7 +642,7 @@ class ClientController extends AppController
 
         for($i=0;$i<count($doctors); $i++)
         {
-        $doc[$doctors[$i]->ID_DOC]=$doctors[$i]->NAME;
+            $doc[$doctors[$i]->ID_DOC]=$doctors[$i]->NAME;
         }
 
         return $this->render('facility', compact('facility', 'dataProvider', 'searchModel', 'doc', 'uslugi'));
@@ -722,7 +715,7 @@ class ClientController extends AppController
         ]);
 
         return $this->render('analysis', compact('pacient', 'bloodProvider', 'BiohimProvider', 'MochaProvider',
-        'UziProvider', 'OtherProvider'));
+            'UziProvider', 'OtherProvider'));
     }
 
 
@@ -1345,74 +1338,74 @@ class ClientController extends AppController
         $visit=Vizit::findOne(['ID_VISIT'=>$ID_VISIT]);
         $doctor=$_GET['doctor'];
 
-       foreach ($_GET as $key => $item) {
-           if($key!='id'&&$key!='r' &&$key!='name'&&$key!='SearchModel'&&$key!='ID_VISIT'&&$key!='doctor'&&$key!='DATASL'&&$key!="DISCOUNT"){
-               if($item!='') {
-                   $price=Price::findOne(['ID_PR'=>$key]);
-                   $facility=new FacilityForm();
-                   $facility->ID_PAC=$visit->ID_PAC;
-                   $facility->ID_CL=$visit->ID_CL;
-                   $facility->ID_DOC=$doctor;
-                   $facility->ID_PR=$key;
-                   $facility->PRICE=$price->PRICE;
-                   $facility->KOL=$item;
-                   $facility->SUMMA=round($facility->KOL*$facility->PRICE,2);
-                   $facility->DATA=date('Y-m-d');
-                   $facility->ID_VISIT=$ID_VISIT;
-                   $procedure=Price::findOne(['ID_PR'=>$facility->ID_PR]);
+        foreach ($_GET as $key => $item) {
+            if($key!='id'&&$key!='r' &&$key!='name'&&$key!='SearchModel'&&$key!='ID_VISIT'&&$key!='doctor'&&$key!='DATASL'&&$key!="DISCOUNT"){
+                if($item!='') {
+                    $price=Price::findOne(['ID_PR'=>$key]);
+                    $facility=new FacilityForm();
+                    $facility->ID_PAC=$visit->ID_PAC;
+                    $facility->ID_CL=$visit->ID_CL;
+                    $facility->ID_DOC=$doctor;
+                    $facility->ID_PR=$key;
+                    $facility->PRICE=$price->PRICE;
+                    $facility->KOL=$item;
+                    $facility->SUMMA=round($facility->KOL*$facility->PRICE,2);
+                    $facility->DATA=date('Y-m-d');
+                    $facility->ID_VISIT=$ID_VISIT;
+                    $procedure=Price::findOne(['ID_PR'=>$facility->ID_PR]);
 
-                   if($procedure->ID_SPDOC==5&&$_GET['DATASL']!=''){
-                       $slVakc=new Sl_vakc();
-                       $slVakc->ID_PAC=$visit->ID_PAC;
-                       $slVakc->DATA=date('Y-m-d');
-                       $slVakc->NAME=$procedure->NAME;
-                       $slVakc->ID_PR=$procedure->ID_PR;
-                       $slVakc->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
-                       $slVakc->save();
-                   }
+                    if($procedure->ID_SPDOC==5&&$_GET['DATASL']!=''){
+                        $slVakc=new Sl_vakc();
+                        $slVakc->ID_PAC=$visit->ID_PAC;
+                        $slVakc->DATA=date('Y-m-d');
+                        $slVakc->NAME=$procedure->NAME;
+                        $slVakc->ID_PR=$procedure->ID_PR;
+                        $slVakc->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
+                        $slVakc->save();
+                    }
 
-                   $facility->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
+                    $facility->DATASL=date('Y-m-d', strtotime($_GET['DATASL']));
 
-                   if($_GET['DISCOUNT']==''){
-                       $_GET['DISCOUNT']=0;
-                   }
+                    if($_GET['DISCOUNT']==''){
+                        $_GET['DISCOUNT']=0;
+                    }
 
-                   //скидка от 25.01.2020
-                   $facility->DISCOUNT_PROCENT=  $_GET['DISCOUNT'];
-                   $facility->DISCOUNT_SUMM=$facility->KOL*$facility->PRICE;
-                   $visit->SUMM_BEFORE_DISCOUNT=$visit->SUMM_BEFORE_DISCOUNT+$facility->DISCOUNT_SUMM;
-                   $facility->SUMMA=$facility->DISCOUNT_SUMM*((100-$facility->DISCOUNT_PROCENT)/100);
-                   $fraction=($facility->SUMMA)-floor($facility->SUMMA);
+                    //скидка от 25.01.2020
+                    $facility->DISCOUNT_PROCENT=  $_GET['DISCOUNT'];
+                    $facility->DISCOUNT_SUMM=$facility->KOL*$facility->PRICE;
+                    $visit->SUMM_BEFORE_DISCOUNT=$visit->SUMM_BEFORE_DISCOUNT+$facility->DISCOUNT_SUMM;
+                    $facility->SUMMA=$facility->DISCOUNT_SUMM*((100-$facility->DISCOUNT_PROCENT)/100);
+                    $fraction=($facility->SUMMA)-floor($facility->SUMMA);
 
-                   if($fraction>0){
-                       $facility->SUMMA= $facility->SUMMA-$fraction+1;
-                   }
+                    if($fraction>0){
+                        $facility->SUMMA= $facility->SUMMA-$fraction+1;
+                    }
 
-                   $visit->SUMMAV=$visit->SUMMAV+$facility->SUMMA;
-                   $fraction=($visit->SUMMAV)-floor($visit->SUMMAV);
+                    $visit->SUMMAV=$visit->SUMMAV+$facility->SUMMA;
+                    $fraction=($visit->SUMMAV)-floor($visit->SUMMAV);
 
-                   if($fraction>0){
-                       $visit->SUMMAV= $visit->SUMMAV-$fraction+1;
-                   }
+                    if($fraction>0){
+                        $visit->SUMMAV= $visit->SUMMAV-$fraction+1;
+                    }
 
-                   $visit->DOLG=$visit->DOLG+$facility->SUMMA;
-                   $fraction=($visit->DOLG)-floor($visit->DOLG);
+                    $visit->DOLG=$visit->DOLG+$facility->SUMMA;
+                    $fraction=($visit->DOLG)-floor($visit->DOLG);
 
-                   if($fraction>0){
-                       $visit->DOLG= $visit->DOLG-$fraction+1;
-                   }
+                    if($fraction>0){
+                        $visit->DOLG= $visit->DOLG-$fraction+1;
+                    }
 
-                   $price=Price::findOne(['ID_PR'=>$facility->ID_PR]);
-                   if($price->IsCount==1){
-                       $price->KOL-=$facility->KOL;
-                       $price->save();
-                   }
+                    $price=Price::findOne(['ID_PR'=>$facility->ID_PR]);
+                    if($price->IsCount==1){
+                        $price->KOL-=$facility->KOL;
+                        $price->save();
+                    }
 
-                   $facility->save();
-                   $visit->save();
-               }
-           }
-       }
+                    $facility->save();
+                    $visit->save();
+                }
+            }
+        }
 
         return $this->redirect('index.php?r=client/facility&ID_VISIT='.$ID_VISIT);
     }
@@ -1462,7 +1455,7 @@ class ClientController extends AppController
 
         $section->addText('      Я, владелец вышеуказанного животного (ответственное лицо), даю согласие на проведение следующих процедур:',[], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
         $section->addText('_______________________________________________________'.
-        '______________________________________________________________________________'
+            '______________________________________________________________________________'
             . '________________________________________________________________________'
             .'__________________________________________________________________________.',[], [ 'align' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH ]);
 
@@ -1684,8 +1677,8 @@ class ClientController extends AppController
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $fio=$client->FAM.' '.$client->NAME.' '.$client->OTCH;
         $adres= 'г. ' .$client->CITY . ', ул. ' . $client->STREET.', д. '.$client->HOUSE.', кв '.$client->FLAT;
-				$clinic = ClinicForm::find()->where(['id' => 1])->one();
-		    $clinicAddress = $clinic->address;
+        $clinic = ClinicForm::find()->where(['id' => 1])->one();
+        $clinicAddress = $clinic->address;
         $document=new PhpWord();
         $document->setDefaultFontName('Times New Roman');
         $document->setDefaultFontSize(12);
@@ -1793,7 +1786,7 @@ class ClientController extends AppController
 
     public function actionPrintblood(){
         Yii::setAlias('@analysis', Yii::$app->basePath . '/analyzes');
-       $analyz=Analys_blood::findOne(['ID_BLOOD'=>$_GET['ID_BLOOD']]);
+        $analyz=Analys_blood::findOne(['ID_BLOOD'=>$_GET['ID_BLOOD']]);
         $pacient=Pacient::findOne(['ID_PAC'=>$analyz->ID_PAC]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $vid=Vid::findOne(['ID_VID'=>$pacient->ID_VID]);
@@ -1811,7 +1804,7 @@ class ClientController extends AppController
                 'cell'=>'A',
             ],
             [
-                 'name'=>'Норма для кошек',
+                'name'=>'Норма для кошек',
                 'cell'=>'B',
             ],
             [

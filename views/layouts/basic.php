@@ -29,6 +29,7 @@ $clinic = ClinicForm::findOne(['id' => 1]);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
     <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => "/web/images/Brand images/$ico->imagePath"]);?>
+    <?php $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => str_replace('\\', '/', realpath(\Yii::getAlias('@commonFolders/Brand Images/').$ico->imagePath)) ]);?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>

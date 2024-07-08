@@ -30,7 +30,8 @@ class ScannedDocForm extends ActiveRecord
     }
 
 		public function DeleteDoc() {
-				unlink(__DIR__ . "/../ScannedDocs/".$this->getAttribute('scanPath'));
+
+				unlink(\Yii::getAlias('@commonFolders/ScannedDocs/').$this->getAttribute('scanPath'));
 				$this->delete();
 				return true;
 		}
