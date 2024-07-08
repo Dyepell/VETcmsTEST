@@ -27,7 +27,7 @@ class DocxReplacer extends Replacer
         $zip = new ZipArchive();
 
         try {
-            if (!copy(\Yii::$app->basePath."/DocTemplates/".$textFiller->templatePath, $this->outputFile)) {
+            if (!copy(\Yii::getAlias('@commonFolders/DocTemplates/').$textFiller->templatePath, $this->outputFile)) {
                 throw new \Exception('Не удалось скопировать шаблон');
             };
         }
