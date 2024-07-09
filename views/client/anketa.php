@@ -125,6 +125,7 @@ use yii\widgets\MaskedInput;
     'prompt' => 'Не выбрано/метис...'
 ])->label('Порода');?>
 <?= $form->field($model, '[$i]KLICHKA')->textInput(['autocomplete'=>'off','style'=>'width: 150px;margin-left:5px;'])?>
+<?= $form->field($model, '[$i]contract')->textInput(['autocomplete'=>'off','style'=>'width: 150px;margin-left:5px;'])?>
 </div>
 
 
@@ -248,6 +249,7 @@ if ($_GET['clientId']!='new'){?>
                 'prompt' => 'Не выбрано/метис...'
             ])->label('Порода');?>
             <?= $form->field($newPacient, 'KLICHKA')->textInput(['autocomplete'=>'off','style'=>'width: 150px;margin-left:5px;'])?>
+            <?= $form->field($newPacient, 'contract')->textInput(['autocomplete'=>'off','style'=>'width: 150px;margin-left:5px;'])?>
 
             </div>
 

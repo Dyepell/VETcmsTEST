@@ -16,9 +16,9 @@ class TextFiller
 {
     const TAG = '$$';
     public $templateTypeName;
-		public $templatePath;
-		public $templatePseudoName;
-		public $postfix;
+	public $templatePath;
+	public $templatePseudoName;
+	public $postfix;
     public $id;
     public $replacer;
     public $phrases;
@@ -31,8 +31,9 @@ class TextFiller
 
     public function __construct($templateTypeName, $data)
     {
-				$this->id = $data['id'];
-    		$docTemplate = DocTemplateForm::find()->joinWith('docTemplateType')->where(['templateTypeName' => $templateTypeName, 'isDefault' => 1])->one();
+        //TODO: Перенести папку common_folders
+		$this->id = $data['id'];
+		$docTemplate = DocTemplateForm::find()->joinWith('docTemplateType')->where(['templateTypeName' => $templateTypeName, 'isDefault' => 1])->one();
         $this->templatePath = $docTemplate->filePath;
         $this->templateTypeName = $templateTypeName;
         $this->templatePseudoName = $docTemplate->templateName;

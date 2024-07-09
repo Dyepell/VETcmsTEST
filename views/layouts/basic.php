@@ -18,7 +18,7 @@ AppAsset::register($this);
 $logo = BrandImagesForm::findOne(['imageType' => 1]);
 $ico = BrandImagesForm::findOne(['imageType' => 3]);
 $clinic = ClinicForm::findOne(['id' => 1]);
-
+$version = \MyUtility\MyUtility::getVersion();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -40,8 +40,9 @@ $clinic = ClinicForm::findOne(['id' => 1]);
     NavBar::begin([
         'brandLabel' => Html::img("/web/images/Brand images/$logo->imagePath", ['alt' => $clinic->clinicName, 'style' => 'height: 45px; width: 171px; left: 50px; margin-top:-10px;']),
         'brandUrl' => Yii::$app->homeUrl,
+        'innerContainerOptions' => ['class' => 'nav-container'],
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top my-navbar',
+            'class' => 'navbar-inverse navbar-fixed-top bg-light my-navbar-test',
         ],
     ]);
     echo Nav::widget([
@@ -59,7 +60,7 @@ $clinic = ClinicForm::findOne(['id' => 1]);
 
 
 
-        ],
+            ],
             [
                 'label' => 'Склад',
                 'items' => [
@@ -107,13 +108,19 @@ $clinic = ClinicForm::findOne(['id' => 1]);
                     ['label' => 'Шаблоны документов', 'url' => ['/docs/templatepage']],
                     ['label' => 'Выйти (' . Yii::$app->request->cookies->getValue('login') . ')', 'url' => ['/auth/logout']]
                 ]
-            ]
+            ],
+            ['label' => 'Версия: ' . $version['version'] .' от '. $version['date'],
+                'url' => ['/client/'],
+                'options' => [
+                        'class' => 'version'
+                ]
+            ],
 
     ]]);
     NavBar::end();
     ?>
 
-    <div class="container-fluid my-content">
+    <div class="container-fluid my-content-test">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

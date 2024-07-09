@@ -44,11 +44,11 @@ class DocTemplateForm extends ActiveRecord
 		public function Upload() {
 				if($this->validate()){
 						if (UploadedFile::getInstance($this, 'file') != null) {
-								unlink(Yii::getAlias('@commonFolders/DocTemplates/').$this->getOldAttribute('imagePath'));
+								unlink(\Yii::getAlias('@commonFolders/DocTemplates/').$this->getOldAttribute('imagePath'));
 								$this->file = UploadedFile::getInstance($this, 'file');
 								$this->filePath = MyUtility::UniqidReal() . '.' . $this->file->extension;
 								$this->setAttribute('filePath', $this->filePath);
-								$this->file->saveAs(Yii::getAlias('@commonFolders/DocTemplates/'). $this->filePath);
+								$this->file->saveAs(\Yii::getAlias('@commonFolders/DocTemplates/'). $this->filePath);
 						}
 						$this->save(false);
 						return true;

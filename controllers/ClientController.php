@@ -220,6 +220,7 @@ class ClientController extends AppController
             $selectPacient[0]->VOZR=$PAC['VOZR'];
             $selectPacient[0]->ID_LDOC=$PAC['ID_LDOC'];
             $selectPacient[0]->PRIMECH=$PAC['PRIMECH'];
+            $selectPacient[0]->PRIMECH=$PAC['contract'];
             $selectPacient[0]->save();
             $this->refresh();
         }
@@ -2772,6 +2773,28 @@ class ClientController extends AppController
 
 
         return $this->render('facility_correct', compact('facility'));
+    }
+
+    public function actionDocnum(){
+        $pacients = Pacient::find()->select(['ID_PAC', 'KLICHKA', 'contract'])->orderBy(['ID_PAC' => SORT_DESC])->all();
+        $values = [];
+        foreach ($pacients as $pacient){
+            preg_match('/\(\d*\-/', $pacient->KLICHKA, $contract);
+            $contract = preg_replace("/[^,.0-9]/", '', $contract);
+            $value = "(" . $pacient->ID_PAC . ', ' . "'$contract[0]')";
+            array_push($values, $value);
+        }
+
+
+
+        $sql = "INSERT INTO pacient (ID_PAC, contract) VALUES ". implode($values, ', ') ."
+                ON DUPLICATE KEY UPDATE contract=VALUES(contract);";
+
+        file_put_contents(Yii::$app->basePath.'/query.txt', $sql);
+        //Yii::$app->db->createCommand($sql)->execute();
+
+
+        return $this->render('test', compact('pacients'));
     }
 }
 

@@ -19,6 +19,7 @@ class Pacient extends ActiveRecord
         return [
             'ID_PAC'=>'ID ',
             'KLICHKA'=>'Кличка',
+            'contract' => 'Номер договора',
             'NAMEPOR'=>'Наименование породы',
             'BDAY'=>'Дата рождения',
             'VOZR'=>'Возраст',

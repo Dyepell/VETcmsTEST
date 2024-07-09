@@ -15,6 +15,7 @@ class PacientForm extends ActiveRecord
     public $docHospital;
     public $docCritical;
     public $docDolg;
+    public $contractRow;
 
     public  static function tableName()
     {
@@ -26,6 +27,7 @@ class PacientForm extends ActiveRecord
         return [
             'ID_PAC'=>'ID пациента',
             'KLICHKA'=>'Кличка',
+            'contract' => 'Номер договора',
             'NAMEPOR'=>'Наименование породы',
             'BDAY'=>'Дата рождения',
             'VOZR'=>'Возраст',
@@ -45,21 +47,23 @@ class PacientForm extends ActiveRecord
         return $this->hasOne(Doctor::className(), ['ID_DOC' => 'ID_LDOC']);
     }
 
-		public function getClient(){
-				return $this->hasOne(Client::className(), ['ID_CL' => 'ID_CL']);
-		}
+    public function getClient(){
+        return $this->hasOne(Client::className(), ['ID_CL' => 'ID_CL']);
+    }
 
-		public function dataForTags($templateType){
-            $temp[] = '_______';
+    public function dataForTags($templateType){
+        $temp[] = '_______';
 
-            if (($templateType == 'docUslugi') OR ($templateType == 'docRefuse') OR ($templateType == 'docSedation') OR ($templateType == 'docInter')
-                OR ($templateType == 'docHospital') OR ($templateType == 'docCritical') OR ($templateType == 'docDolg')) {
+        if (($templateType == 'docUslugi') OR ($templateType == 'docRefuse') OR ($templateType == 'docSedation') OR ($templateType == 'docInter')
+            OR ($templateType == 'docHospital') OR ($templateType == 'docCritical') OR ($templateType == 'docDolg')) {
                 //пока применяются только ранее используемые в документах поля, позднее, с настройкой связей можно будет выводить все возможные поля
                 $data['data'] = array_merge(
                     ($this->getClient()->one() != NULL) ? $this->getClient()->one()->getAttributes() : $temp,
                     ($this->getVid()->one() != NULL) ? $this->getVid()->one()->getAttributes() : $temp,
                     $this->getAttributes()
-                ) ;
+                );
+
+                $data['data']['contract'] = $this->contract . '-' .  date("m", strtotime($this->DATE)) . '-' . date("Y", strtotime($this->DATE));
 
                 //переделать через self без экземпляров моделей
                 $attrNames = array_merge(
@@ -74,17 +78,20 @@ class PacientForm extends ActiveRecord
                 exit();
             }
 
+        return $data;
+    }
 
-				return $data;
-		}
-    
+    public function init()
+    {
+        parent::init();
+        $this->contract = Pacient::find()->where('YEAR(DATE) >= YEAR(NOW())')->max('contract') + 1;
+    }
+
     
     public function rules()
     {
         return [
-            [['ID_PAC', "KLICHKA", "NAMEPOR", "VOZR", "POL", "PRIMECH", "ID_CL", "ID_LDOC", "ID_POR", "BDAY", "ID_VID"], 'safe'],
-
-
+            [['ID_PAC', "KLICHKA", "contract", "NAMEPOR", "VOZR", "POL", "PRIMECH", "ID_CL", "ID_LDOC", "ID_POR", "BDAY", "ID_VID"], 'safe'],
 
         ];
     }

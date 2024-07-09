@@ -44,7 +44,7 @@ class MyUtility
         }
     }
 
-    function get_absolute_path($path) {
+    public function get_absolute_path($path) {
         $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
         $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
         $absolutes = array();
@@ -58,6 +58,11 @@ class MyUtility
         }
         return implode(DIRECTORY_SEPARATOR, $absolutes);
     }
+
+    public function getVersion() {
+        return json_decode(file_get_contents(\Yii::$app->basePath . '/version.json'), true);
+    }
+
 
 }
 ?>

@@ -155,8 +155,28 @@
     font-size: 150%;
 }
 
+.my-navbar-test {
+    background-color: rgb(86, 125, 245);
+    font-size: 150%;
+}
+
+.my-navbar-test li a{
+    color: #1a1a1a !important;
+}
+
+
+.version {
+    position: absolute;
+    font-weight: bold;
+}
+
+
 .my-content {
     background-color: #e6ffff;
+}
+
+.my-content-test {
+    background-color: #a8c7ff;
 }
 
 
