@@ -64,6 +64,9 @@ class PacientForm extends ActiveRecord
                 );
 
                 $data['data']['contract'] = $this->contract . '-' .  date("m", strtotime($this->DATE)) . '-' . date("Y", strtotime($this->DATE));
+                $data['data']['registrationDate'] = date("d.m.Y", strtotime($this->DATE));
+                //TODO: проблема с неоформлением договора в день занесения пациента
+
 
                 //переделать через self без экземпляров моделей
                 $attrNames = array_merge(

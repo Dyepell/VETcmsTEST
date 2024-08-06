@@ -218,7 +218,7 @@ Pjax::end();?>
             <tr>
 
                 <td><?=$pacient->vid->NAMEVID?></td>
-                <td><a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>"><?=$pacient->KLICHKA?></a></td>
+                <td><a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>"><?=$pacient->KLICHKA?> (<?=$pacient->contract . '-' . date('m-Y', strtotime($pacient->DATE))?>)</a></td>
 
             </tr>
             <?php endforeach;?>

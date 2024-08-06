@@ -38,7 +38,7 @@ $version = \MyUtility\MyUtility::getVersion();
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Html::img("/web/images/Brand images/$logo->imagePath", ['alt' => $clinic->clinicName, 'style' => 'height: 45px; width: 171px; left: 50px; margin-top:-10px;']),
+        //'brandLabel' => Html::img("/web/images/Brand images/$logo->imagePath", ['alt' => $clinic->clinicName, 'style' => 'height: 45px; width: 171px; left: 50px; margin-top:-10px;']),
         'brandUrl' => Yii::$app->homeUrl,
         'innerContainerOptions' => ['class' => 'nav-container'],
         'options' => [

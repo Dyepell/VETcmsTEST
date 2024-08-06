@@ -67,6 +67,8 @@ use app\models\BrandImagesForm;
 use bubasuma\simplechat\controllers\ControllerTrait;
 use MercuryAPI\MercuryWrapper;
 use yii\filters\AccessControl;
+use app\models\Istbol_new;
+use yii\helpers\ArrayHelper;
 
 
 class ClientController extends AppController
@@ -220,7 +222,7 @@ class ClientController extends AppController
             $selectPacient[0]->VOZR=$PAC['VOZR'];
             $selectPacient[0]->ID_LDOC=$PAC['ID_LDOC'];
             $selectPacient[0]->PRIMECH=$PAC['PRIMECH'];
-            $selectPacient[0]->PRIMECH=$PAC['contract'];
+            $selectPacient[0]->contract=$PAC['contract'];
             $selectPacient[0]->save();
             $this->refresh();
         }
@@ -341,6 +343,11 @@ class ClientController extends AppController
             'pagination' => false,
         ]);
 
+        $newIstbolProvider = new ActiveDataProvider([
+            'query' => Istbol_new::find()->where(['ID_PAC'=>$pacientId]),
+            'pagination' => false,
+        ]);
+
         if(!Yii::$app->request->get('page')){
             $dataProvider->pagination->page = ceil($dataProvider->getTotalCount() / $dataProvider->pagination->pageSize) - 1;
         }
@@ -350,11 +357,18 @@ class ClientController extends AppController
             'pagination' => false,
         ]);
 
+				$newIstbolProvider = new ActiveDataProvider([
+						'query' => Istbol_new::find()->where(['ID_PAC'=>$pacientId]),
+						'pagination' => false,
+				]);
+
+				$previousIstBol = Istbol_new::find()->where(['parentIst' => 0, 'ID_PAC' => $pacientId])->orderBy(['date' => SORT_DESC])->one();
+
         $pacient=Pacient::findOne(['ID_PAC'=>$pacientId]);
         $client=Client::findOne(['ID_CL'=>$pacient->ID_CL]);
         $this->view->title='Визиты: '.$pacient->KLICHKA;
 
-        return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider'));
+        return $this->render('visits', compact('dataProvider', 'client', 'pacient', 'vakcineProvider', 'istbolProvider', 'newIstbolProvider', 'previousIstBol'));
     }
 
 
@@ -400,6 +414,13 @@ class ClientController extends AppController
                 'query' => Istbol::find()->where(['ID_PAC'=>$visit->ID_PAC]),
                 'pagination' => false,
             ]);
+
+            $newIstbolProvider = new ActiveDataProvider([
+                'query' => Istbol_new::find()->where(['ID_PAC'=>$visit->ID_PAC]),
+                'pagination' => false,
+            ]);
+
+            $previousIstBol = Istbol_new::find()->where(['parentIst' => 0, 'ID_PAC' => $visit->ID_PAC])->orderBy(['date' => SORT_DESC])->one();
 
             $visit->DATE=date("d.m.Y", strtotime($visit->DATE));
 
@@ -514,7 +535,7 @@ class ClientController extends AppController
         $this->view->title='Визит: '.$pacient->KLICHKA;
         return $this->render('visit', compact('pacient', 'visit', 'prFacProvider', 'FacilityProvider',
             'totalSumm', 'istbolProvider', 'oplataProvider','prFacilityProvider', 'doc', 'goodsSalesProvider',
-            'model', 'salesProducts', 'doctors', 'docDolg'));
+            'model', 'salesProducts', 'doctors', 'docDolg', 'newIstbolProvider', 'previousIstBol'));
     }
 
 
@@ -676,6 +697,53 @@ class ClientController extends AppController
 
         return $this->render('istbol', compact('istbol', 'pacient', 'textFiller'));
     }
+
+
+		public function actionIstbol_new(){
+    		$changedRecordsCounter = 0;
+    		$anchors = [0,4,17, 33, 38, 42, 43, 44];
+
+				if ($_GET['idIst']!=NULL){
+						$istbol = Istbol_new::findOne(['idIst'=>$_GET['idIst']]);
+						$pacient = Pacient::findOne(['ID_PAC'=>$istbol->ID_PAC]);
+						$previousIstbol = Istbol_new::find()->where(['idIst' => $_GET['idIst']])->andWhere(['ID_PAC'=>$istbol->ID_PAC])->andWhere(['parentIst' => $istbol->parentIst])->all();
+
+
+						$data = [
+								'templateType' => 'docx',
+								'id' => $_GET['idIst']
+						];
+						$textFiller = new TextFiller('istBol', $data);
+
+				} elseif ($_GET['parentIst']!=NULL){
+						//TODO: Зарефакторить
+
+						$parentHistory = Istbol_new::find()->where(['idIst' => $_GET['parentIst']])->one();
+						$istbol =new Istbol_new();
+						$istbol->date=date("Y-m-d H:i:s");
+						$istbol->parentIst = $_GET['parentIst'];
+
+						$previousIstbol = Istbol_new::find()->where(['idIst' => $_GET['parentIst']])->orWhere(['parentIst' => $_GET['parentIst']])->andWhere(['ID_PAC'=>$parentHistory->ID_PAC])->all();
+						$pacient = Pacient::findOne(['ID_PAC'=>$previousIstbol[0]['ID_PAC']]);
+						$istbol->ID_PAC=$pacient->ID_PAC;
+						//MyUtility::Dump($previousIstbol);
+				} else {
+						$istbol =new Istbol_new();
+						$istbol->date=date("Y-m-d H:i:s");
+						$pacient = Pacient::findOne(['ID_PAC'=>$_GET['ID_PAC']]);
+						$istbol->ID_PAC=$pacient->ID_PAC;
+				}
+
+				if ( $istbol->load(Yii::$app->request->post()) ){
+						if ($istbol->save()){
+								return $this->redirect("index.php?r=client/istbol_new&idIst=".$istbol->idIst);
+						}
+				}
+
+
+
+				return $this->render('istbol_new', compact('istbol', 'pacient', 'textFiller', 'previousIstbol'));
+		}
 
 
     public function  actionIstboldelete(){

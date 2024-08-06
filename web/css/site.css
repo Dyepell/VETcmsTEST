@@ -143,3 +143,116 @@ a.desc:after {
     font-size: 200%;
 }
 
+.headline {
+    border: 1px;
+    border: solid;
+    border-right: 0px;
+    border-bottom: 0px;
+    border-left: 0px;
+}
+
+.history {
+    border-bottom: 1px;
+    border-bottom: solid;
+}
+
+.anchorLink {
+    color: #0f6674;
+    font-size: 130%;
+}
+
+html{
+    scroll-behavior: smooth;
+    scroll-padding-top: 150px;
+}
+.breadcrumbs {
+    margin-top: 2px;
+    padding-left: 100px;
+    padding-right: 10px;
+    position: fixed;
+    background-color: #83adf7;
+    z-index: 9999;
+    border-radius: 30px;
+    width: 50% !important;
+}
+
+
+.slider {
+    width: 800px;
+    /*height: 500px;*/
+    overflow: hidden;
+}
+
+.middle {
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+}
+
+.navigation {
+    /*position: absolute;*/
+    /*bottom: 16px;*/
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
+    /*display: flex;*/
+}
+
+.bar {
+    /*width: 30px;*/
+    height: 8px;
+    margin: 6px;
+    cursor: pointer;
+
+    opacity: .5;
+    transition: all 0.4s ease;
+}
+
+.bar:hover {
+    opacity: 1;
+    transform:scale(1.1);
+}
+
+input[name="r"] {
+    position: absolute;
+    visibility: hidden;
+}
+
+.slides {
+    width: 400%;
+    /*height: 100%;*/
+    display: flex;
+}
+
+.slide {
+    width: 25%;
+    transition: all 0.6s ease;
+}
+
+#r1:checked ~ .s1 {
+    margin-left: 0;
+}
+
+#r2:checked ~ .s1 {
+    margin-left: -25%;
+}
+
+#r3:checked ~ .s1 {
+    margin-left: -50%;
+}
+
+#r4:checked ~ .s1 {
+    margin-left: -75%;
+}
+
+.bar {
+    color: #333333;
+}
+
+.parentIstRow {
+    background-color: #9dd3e3 !important;
+}
+
+
+
+

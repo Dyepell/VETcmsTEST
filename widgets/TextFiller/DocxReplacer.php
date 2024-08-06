@@ -45,6 +45,8 @@ class DocxReplacer extends Replacer
         $xml = $zip->getFromName('word/document.xml');
 
         // Replace the strings
+
+        $textFiller->phrases['currentDate'] = date('d.m.Y');
         $xml = strtr($xml, $textFiller->implodeTags($textFiller->phrases));
 
         // Write back to the document and close the object

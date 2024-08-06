@@ -101,7 +101,7 @@ use yii\widgets\MaskedInput;
             <?php if ($_GET['clientId']!='new'){ foreach ($pacModel as $i=> $model):?>
 
             <div class="col">
-                <a href="#" style="width: 100%;text-align: left;margin-top: 10px" onclick="toggle('#menu-<?=$i?>');" class="btn btn-default"><?=$model->KLICHKA?></a>
+                <a href="#" style="width: 100%;text-align: left;margin-top: 10px" onclick="toggle('#menu-<?=$i?>');" class="btn btn-default"><?=$model->KLICHKA?> (<?=$model->contract . '-' . date('m-Y', strtotime($model->DATE))?>)</a>
                 <div id="menu-<?=$i?>" class="pacient-form" style="">
 
  <?php $form = ActiveForm::begin(['options'=>['id'=>$i, 'style'=>'margin:10px;margin-top:0px;padding-top: 10px;padding-bottom: 10px;']]) ?>

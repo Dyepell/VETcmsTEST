@@ -31,7 +31,6 @@ class TextFiller
 
     public function __construct($templateTypeName, $data)
     {
-        //TODO: Перенести папку common_folders
 		$this->id = $data['id'];
 		$docTemplate = DocTemplateForm::find()->joinWith('docTemplateType')->where(['templateTypeName' => $templateTypeName, 'isDefault' => 1])->one();
         $this->templatePath = $docTemplate->filePath;
@@ -50,6 +49,7 @@ class TextFiller
 
     private function prepareData($data)
     {
+        //TODO массив с типами шаблонов
         //выделить эти ифы в метод
         if (($this->templateTypeName == 'docUslugi') OR ($this->templateTypeName == 'docRefuse') OR ($this->templateTypeName == 'docSedation')
             OR ($this->templateTypeName == 'docInter') OR ($this->templateTypeName == 'docHospital') OR ($this->templateTypeName == 'docCritical')

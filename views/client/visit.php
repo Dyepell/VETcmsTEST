@@ -57,6 +57,77 @@ $('#visitForm').on('beforeSubmit', function()
 </div>
 
 
+<div class="modal fade" id="istbolNew" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">История болезни (новая)</h4>
+            </div>
+            <div class="modal-body">
+                <?php
+                if ($_GET['ID_VISIT']!=null){echo GridView::widget([
+                    'dataProvider'=>$newIstbolProvider,
+                    'id'=>'istbolNew',
+
+                    'columns'=>
+
+                        [
+                            ['label' => 'ID',
+                                'attribute' => 'idIst',
+
+                            ],
+                            ['label' => 'ID пациента',
+                                'attribute' => 'ID_PAC',
+
+                            ],
+                            ['label' => 'Дата создания истории',
+                                'attribute' => 'date',
+
+                            ],
+                            ['label' => 'Предварительный диагноз',
+                                'attribute' => 'preDiagnos',
+
+                            ],
+                            ['label' => 'Окончательный диагноз',
+                                'attribute' => 'finalDiagnos',
+
+                            ],
+                        ],
+
+                    'rowOptions' => function ($model, $key, $index, $grid) {
+
+                        if ($model->parentIst == 0 ){
+                            $class = 'parentIstRow';
+                        } else {
+                            $class = 'regularRow';
+                        }
+                        return ['id' => $model['idIst'], 'onclick' => 'window.location = "index.php?r=client/istbol_new&idIst="+this.id', 'class' => $class];
+
+                    },
+
+
+                ]);}?>
+                <div class="row" style="text-align: center">
+                    <?php if ($previousIstBol != null): ?>
+
+                    <a href="index.php?r=client/istbol_new&parentIst=<?=$previousIstBol->idIst?>" class="btn btn-info" style="width: 45%;">Продолжить последнюю историю</a>
+                    <?php endif;?>
+
+                    <a href="index.php?r=client/istbol_new&ID_PAC=<?=$visit->ID_PAC?>" class="btn btn-success" style="width: 45%;">Создать новую историю</a>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" id="istbol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -141,7 +212,7 @@ $('#visitForm').on('beforeSubmit', function()
 
 
 <div class="row container-fluid " style="margin-top: 70px;">
-    <h1>Визит <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>&clientId=<?=$pacient->ID_CL?>"><?=$pacient->KLICHKA?></a></h1>
+    <h1>Визит <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>&clientId=<?=$pacient->ID_CL?>"><?=$pacient->KLICHKA?> <?=$pacient->contract?></a></h1>
     <div class="col-md-6 p-0">
     <?php $form = ActiveForm::begin(['options'=>['id'=>'visitForm', 'validateOnSubmit' => false]]) ?>
         <div style="display: flex">
@@ -272,8 +343,11 @@ $('#visitForm').on('beforeSubmit', function()
 
     <div class="col-md-5" style="margin-left: 20px;">
         <?php if($_GET['ID_VISIT']!=NULL):?>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#istbol">
-            Истории болезни
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#istbolNew">
+            История болезни (новая)
+        </button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#istbol">
+            Истории болезни (старые)
         </button>
         <a href="index.php?r=client/analysis&ID_PAC=<?=$visit->ID_PAC?>" class="btn btn-primary">Исследования</a>
 <!--            <br><span style = "font-size: 150%">Товары к визиту</span>-->

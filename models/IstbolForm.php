@@ -79,7 +79,7 @@ class IstbolForm extends ActiveRecord
 						($this->getVid()->one() != NULL) ? $this->getVid()->one()->getAttributes(['NAMEVID']) : $temp,
             $this->getAttributes(['ID_IST', 'DIST', 'OBSL'])
 				) ;
-        $data['data']['contract'] = $this->contract . '-' .  date("m", strtotime($this->DATE)) . '-' . date("Y", strtotime($this->DATE));
+        //$data['data']['contract'] = $this->contract . '-' .  date("m", strtotime($this->DATE)) . '-' . date("Y", strtotime($this->DATE));
 
         //переделать через self без экземпляров моделей
         $attrNames = array_merge(

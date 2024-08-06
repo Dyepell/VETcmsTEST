@@ -10,7 +10,8 @@ use yii\grid\GridView;
     <span style="font-size: 200%;"><?=$pacient->KLICHKA?> </span>
     <span style="font-size: 130%;"><a href="index.php?r=client/anketa&clientId=<?=$pacient->ID_CL?>">(<?=$client->FAM.' '.$client->NAME.' '.$client->OTCH?>)</a></span>
     <a href="index.php?r=client/visit&ID_PAC=<?=$pacient->ID_PAC?>" class="btn btn-success">Новый визит</a>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#istbol">Истории болезни</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#istbolNew">История болезни (новая)</button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#istbol">Истории болезни (старые)</button>
     <a href="index.php?r=client/analysis&ID_PAC=<?=$_GET['pacientId']?>" class="btn btn-primary">Исследования</a>
 
     <?php echo GridView::widget([
@@ -106,6 +107,76 @@ use yii\grid\GridView;
         ]);?>
 </div>
 
+</div>
+
+<div class="modal fade" id="istbolNew" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">История болезни (новая)</h4>
+            </div>
+            <div class="modal-body">
+								<?php
+								echo GridView::widget([
+										'dataProvider'=>$newIstbolProvider,
+										'id'=>'istbolNew',
+
+										'columns'=>
+
+												[
+														['label' => 'ID',
+																'attribute' => 'idIst',
+
+														],
+														['label' => 'ID пациента',
+																'attribute' => 'ID_PAC',
+
+														],
+														['label' => 'Дата создания истории',
+																'attribute' => 'date',
+
+														],
+														['label' => 'Предварительный диагноз',
+																'attribute' => 'preDiagnos',
+
+														],
+														['label' => 'Окончательный диагноз',
+																'attribute' => 'finalDiagnos',
+
+														],
+												],
+
+										'rowOptions' => function ($model, $key, $index, $grid) {
+
+												if ($model->parentIst == 0 ){
+														$class = 'parentIstRow';
+												} else {
+														$class = 'regularRow';
+												}
+												return ['id' => $model['idIst'], 'onclick' => 'window.location = "index.php?r=client/istbol_new&idIst="+this.id', 'class' => $class];
+
+										},
+
+
+								]);?>
+                <div class="row" style="text-align: center">
+										<?php if ($previousIstBol != null): ?>
+
+                        <a href="index.php?r=client/istbol_new&parentIst=<?=$previousIstBol->idIst?>" class="btn btn-info" style="width: 45%;">Продолжить последнюю историю</a>
+										<?php endif;?>
+
+                    <a href="index.php?r=client/istbol_new&ID_PAC=<?=$pacient->ID_PAC?>" class="btn btn-success" style="width: 45%;">Создать новую историю</a>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="istbol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
