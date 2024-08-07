@@ -2,17 +2,65 @@
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm; ?>
+use yii\widgets\ActiveForm;
+use yii\grid\GridView;
+?>
 
 <div class="row container-fluid " style="margin-top: 70px; padding: 0px; padding-bottom: 500px;">
     <?php $form = ActiveForm::begin(['options'=>['id'=>'istbolNew']]) ?>
+    <div class="row" style="z-index: 9999;"><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#istbol">Истории болезни (старые)</button></div>
+    <div class="modal fade" style="margin-top: 150px;" id="istbol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Истории болезни</h4>
+                </div>
+                <div class="modal-body">
+										<?php
+										echo GridView::widget([
+												'dataProvider'=>$istbolProvider,
+												'id'=>'istbol',
+
+												'columns'=>
+
+														[
+																['label' => 'Дата',
+																		'attribute' => 'DIST',
+																],
+                                                                ['label' => 'Данные объективного исследования',
+                                                                        'attribute' => 'OBSL',
+                                                                ],
+                                                        ],
+
+												'rowOptions' => function ($model, $key, $index, $grid) {
+
+														return ['id' => $model['ID_IST'], 'onclick' => 'window.location = "index.php?r=client/istbol&ID_IST="+this.id'];
+
+												},
+
+
+										]);?>
+                    <a href="index.php?r=client/istbol&ID_PAC=<?=$_GET['pacientId']?>" class="btn btn-success" style="width: 100%;">Добавить историю</a>
+                </div>
+                <div class="modal-footer">
+                    <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="col-md-6 history" style="border-right: 1px; border-right: solid;">
         <? if($_GET['idIst'] != null): ?>
-            <h3 style="color: red">Запись от <?=date('d.m.y', strtotime($istbol->date))?></h3>
+            <h3 style="color: red">Запись от <?=date('d.m.y', strtotime($istbol->date))?>
+                <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>&clientId=<?=$pacient->ID_CL?>"><?=$pacient->KLICHKA?> <?=$pacient->contract?></a>
+            </h3>
         <? else: ?>
-            <h3>Новая запись</h3>
+            <h3>Новая запись <a href="index.php?r=client/visits&pacientId=<?=$pacient->ID_PAC?>&clientId=<?=$pacient->ID_CL?>"><?=$pacient->KLICHKA?> <?=$pacient->contract?></a></h3>
         <? endif; ?>
 
         <div class="row breadcrumbs">

@@ -702,7 +702,10 @@ class ClientController extends AppController
 		public function actionIstbol_new(){
     		$changedRecordsCounter = 0;
     		$anchors = [0,4,17, 33, 38, 42, 43, 44];
-
+				$istbolProvider = new ActiveDataProvider([
+						'query' => Istbol::find()->where(['ID_PAC'=>$pacientId]),
+						'pagination' => false,
+				]);
 				if ($_GET['idIst']!=NULL){
 						$istbol = Istbol_new::findOne(['idIst'=>$_GET['idIst']]);
 						$pacient = Pacient::findOne(['ID_PAC'=>$istbol->ID_PAC]);
@@ -711,7 +714,7 @@ class ClientController extends AppController
 
 						$data = [
 								'templateType' => 'docx',
-								'id' => $_GET['idIst']
+								'id' => 1111
 						];
 						$textFiller = new TextFiller('istBol', $data);
 
@@ -736,13 +739,13 @@ class ClientController extends AppController
 
 				if ( $istbol->load(Yii::$app->request->post()) ){
 						if ($istbol->save()){
-								return $this->redirect("index.php?r=client/istbol_new&idIst=".$istbol->idIst);
+								return $this->redirect("index.php?r=client/visits&pacientId=" . $pacient->ID_PAC . "&clientId=" . $pacient->ID_CL);
 						}
 				}
 
 
 
-				return $this->render('istbol_new', compact('istbol', 'pacient', 'textFiller', 'previousIstbol'));
+				return $this->render('istbol_new', compact('istbol', 'pacient', 'textFiller', 'previousIstbol', 'istbolProvider'));
 		}
 
 

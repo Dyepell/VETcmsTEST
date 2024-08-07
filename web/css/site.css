@@ -171,7 +171,7 @@ html{
     padding-right: 10px;
     position: fixed;
     background-color: #83adf7;
-    z-index: 9999;
+    z-index: 9000;
     border-radius: 30px;
     width: 50% !important;
 }
